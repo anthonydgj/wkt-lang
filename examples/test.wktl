@@ -1,0 +1,179 @@
+################
+# TEST PROGRAM #
+################
+
+
+# ----------------- #
+# Proposed features #
+# ----------------- #
+
+
+# Data types
+1; 3.14159; -10;                # numeric
+Point(1 1);                     # point
+LineString(1 1, 2 2, 3 3);      # line string
+Polygon((1 1, 2 2, 3 3, 1 1));  # polygon
+GeometryCollection(Point(1 1)); # geometry collection (also functions as an array)
+
+
+# Accessors
+# Point(1 2)[0]; # 1
+# Point(1 2)[1]; # 2
+# Point(1 2)[3]; # Error
+# LineString(1 1, 2 2, 3 3)[1]; # Point(2 2)
+# LineString(1 2, 3 4, 5 6)[1][0]; # 3
+
+# Methods
+# LineString(1 1, 2 2, 3 3).length; # 3
+# GeometryCollection(Point(1 1)).append(Point 2 2); # GeometryCollection(Point(1 1), Point(2 2))
+# GeometryCollection(Point(1 1), Point(2 2)).remove(0); # GeometryCollection(Point(2 2))
+
+# Comparison expressions: > >= == <= <
+# 2 > 8; # True
+# 2 <= 8; # False
+# Point(1 1)[0] > Point(2 2)[0]; # True
+
+# Conditional expressions
+# Point(1 0) == Point(1 0) ? Point(2 2) : Point(3 3) # Point(2 2)
+
+# List mapping operations with the map (pipe) symbol: |
+# LineString(1 1, 2 2) | Function(p => p + Point(1 1)); # LineString(2 2, 3 3)
+# LineString(1 1, 2 2) | Function((p, i) => Point(i i)); # Access index in second param
+
+# List filter operations with the filter symbol: |~
+# LineString(1 1, 2 2, 3 3) |~ Function(p => p > Point(1 1)); # LineString(2 2, 3 3)
+
+# Reduce filter opeations with the reduce symbol: |>
+# LineString(1 1, 2 2, 3 3) |> Function((curr, prev) => curr + prev); # Point(6 6)
+
+# Iterate list geometries
+# Points(10); # Iterate 10 points of Point(0 0) in a geometry collection
+# Points(10, Function(i => Point(i i))); # Create geometry collection of 10 specific points
+
+# Flatten geometry collections
+# Points(10) | Function(() => Points(10)) | Flatten; # Geometry collection of 100 points
+
+# Import data
+# features = IMPORT('./path/to/file.wkt')
+
+# Import data and environment
+# layer = IMPORT('./path/to/file.wktl')
+
+
+
+# NO_OUTPUT
+GEOMETRYCOLLECTION(
+    POINT (30 10),
+    LINESTRING (30 10, 10 30, 40 40),
+    POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10)),
+    POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),
+        (20 30, 35 35, 30 20, 20 30))
+);
+
+fn1 = Function((x, y) => Point(x y));
+fn2 = Function(f => LineString(1 1, f(2, 3)));
+
+myFn = Function((x, y, last) => {
+    first = Point(x y);
+    LineString(first, last)
+});
+myFn(1, 2, Point(3 4)); # LINESTRING(1 2, 3 4);
+fn2(fn1);
+
+# Examples
+
+Point(-110 38) + 
+    (Generate 20 Function(x => 
+        Generate 10 Function(y => Point((x * 2) (y * 2))
+    )))
+    | Flatten;
+
+Point(-110 38) + 
+    (Generate 20 Function(x => 
+        Generate 10 Function(y => {
+            xOffset = 1 - random() * 2;
+            yOffset = 1 - random() * 2;
+            Point((x * 2 + xOffset) (y * 2 + yOffset))
+        })
+    ))
+    | Flatten;
+
+Generate 5 Function(i => {
+    ring = i + 1;
+    PointCircle((ring * 2), (ring * 10))
+})
+| Flatten;
+
+Generate 5 Function(i => {
+    ring = i + 1;
+    radius = ring * 2;
+    count = ring * 10;
+    angleIncrement = (2 * PI) / count;
+    Generate count Function(i => {
+        angle = i * angleIncrement;
+        x = radius * cos(angle);
+        y = radius * sin(angle);
+        Point(x y)
+    })
+})
+| Flatten;
+
+rotatePoint = Function((p, angle, origin) => {
+    # Convert angle to radians
+    angleRad = angle * (PI / 180);
+
+    # Translate the point to the origin
+    translatedX = p:x() - origin:x();
+    translatedY = p:y() - origin:y();
+
+    # Apply rotation
+    rotatedX = translatedX * cos(angleRad) - translatedY * sin(angleRad);
+    rotatedY = translatedX * sin(angleRad) + translatedY * cos(angleRad);
+
+    # Translate the point back to the original position
+    finalX = rotatedX + origin:x();
+    finalY = rotatedY + origin:y();
+
+    Point(finalX finalY)
+});
+
+rotateCollection = Function((collection, angle, origin) => 
+    (collection || Function(p => rotatePoint(p, angle, origin)))
+);
+
+rotateCollection(PointGrid(20, 10, 4), 23, Point(0 0));
+
+Generate 5 Function(i => {
+    ring = i + 1;
+    PointCircle((ring * 2), (ring * 10))
+})
+    | Flatten
+    || Function(a => {
+        If a:x() < 0 Then
+            (a + Point(0 10))
+        Else
+            (a - Point(0 10))
+    });
+
+
+rotatePoint = Function((p, angle, origin) => {
+    # Convert angle to radians
+    angleRad = angle * (PI / 180);
+
+    # Translate the point to the origin
+    translatedX = p:x() - origin:x();
+    translatedY = p:y() - origin:y();
+
+    # Apply rotation
+    rotatedX = translatedX * cos(angleRad) - translatedY * sin(angleRad);
+    rotatedY = translatedX * sin(angleRad) + translatedY * cos(angleRad);
+
+    # Translate the point back to the original position
+    finalX = rotatedX + origin:x();
+    finalY = rotatedY + origin:y();
+
+    Point(finalX finalY)
+});
+
+PointGrid(20, 10, 4)
+    || Function(p => rotatePoint(p, 23, Point(0 0)));
