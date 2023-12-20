@@ -4,11 +4,21 @@
 
 Basic support is currently available for the following 2D geometries: `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `GEOMETRYCOLLECTION`.
 
-## Installation
+## Usage
 
+Install dependency:
 ```
 npm install wkt-lang
 ```
+
+Evaluate code using the `evaluate()` function:
+```
+import { evaluate } from 'wkt-lang';
+
+const result = evaluate(`Point(1 1) + Point(2 2)`);
+```
+
+See the [Terminal Usage](#terminal-usage) section for instructions using the CLI program.
 
 ## Examples
 
@@ -87,7 +97,7 @@ Generate 5 Function(i => {
 <br>
 
 
-## Command Line Interface (CLI)
+## Terminal Usage
 
 The `wktl.ts` script can be used to evaluate code and output the resulting WKT:
 ```
