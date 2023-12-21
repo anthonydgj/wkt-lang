@@ -87,8 +87,9 @@ PointGrid(20, 10, 4)
 
 #### Create several nested circle polygons:
 ```
-Generate 5 Function(i => {
-    ring = i + 1;
+numRings = 5;
+Generate numRings Function(i => {
+    ring = numRings - i;
     (PointCircle((ring * 2), (ring * 10))) | ToPolygon
 })
 ```
