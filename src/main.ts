@@ -12,7 +12,7 @@ export interface Options {
     scope?: Scope
 }
 
-const DEFAULT_OPTIONS: Options = {
+export const DEFAULT_OPTIONS: Options = {
     outputFormat: OutputFormat.WKT
 }
 
