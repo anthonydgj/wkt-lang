@@ -4,6 +4,8 @@
 
 Basic support is currently available for the following 2D geometries: `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `GEOMETRYCOLLECTION`.
 
+The language can be used at [geojsonscript.io](https://geojsonscript.io?lang=WktLang) with the `wkt-lang` code editor option selected.
+
 ## Usage
 
 Install dependency:
