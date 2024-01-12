@@ -4,7 +4,8 @@
 
 Basic support is currently available for the following 2D geometries: `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `GEOMETRYCOLLECTION`.
 
-The language can be used at [geojsonscript.io](https://geojsonscript.io?lang=WktLang) with the `wkt-lang` code editor option selected.
+🌍 **Try out the language at [geojsonscript.io](https://geojsonscript.io?lang=WktLang) with the `wkt-lang` code editor option selected.**
+
 
 ## Usage
 
@@ -112,7 +113,7 @@ To output GeoJSON instead of WKT, add the `--geojson` flag:
 npx ts-node ./scripts/wktl.ts ./myScript.wktl --geojson
 ```
 
-To evaluate expressions interactively, use the `--interactive` (or `-i`) flag.
+To evaluate expressions interactively in a read-eval-print loop (REPL), use the `--interactive` (or `-i`) flag.
 ```
 npx ts-node ./scripts/wktl.ts -i
 ```
