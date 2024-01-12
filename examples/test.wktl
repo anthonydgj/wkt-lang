@@ -1,67 +1,67 @@
-################
-# TEST PROGRAM #
-################
+// ###############
+// # TEST PROGRAM #
+// ###############
 
 
-# ----------------- #
-# Proposed features #
-# ----------------- #
+// ----------------- #
+// Proposed features #
+// ----------------- #
 
 
-# Data types
-1; 3.14159; -10;                # numeric
-Point(1 1);                     # point
-LineString(1 1, 2 2, 3 3);      # line string
-Polygon((1 1, 2 2, 3 3, 1 1));  # polygon
-GeometryCollection(Point(1 1)); # geometry collection (also functions as an array)
+// Data types
+1; 3.14159; -10;                // numeric
+Point(1 1);                     // point
+LineString(1 1, 2 2, 3 3);      // line string
+Polygon((1 1, 2 2, 3 3, 1 1));  // polygon
+GeometryCollection(Point(1 1)); // geometry collection (also functions as an array)
 
 
-# Accessors
-# Point(1 2)[0]; # 1
-# Point(1 2)[1]; # 2
-# Point(1 2)[3]; # Error
-# LineString(1 1, 2 2, 3 3)[1]; # Point(2 2)
-# LineString(1 2, 3 4, 5 6)[1][0]; # 3
+// Accessors
+// Point(1 2)[0]; // 1
+// Point(1 2)[1]; // 2
+// Point(1 2)[3]; // Error
+// LineString(1 1, 2 2, 3 3)[1]; // Point(2 2)
+// LineString(1 2, 3 4, 5 6)[1][0]; // 3
 
-# Methods
-# LineString(1 1, 2 2, 3 3).length; # 3
-# GeometryCollection(Point(1 1)).append(Point 2 2); # GeometryCollection(Point(1 1), Point(2 2))
-# GeometryCollection(Point(1 1), Point(2 2)).remove(0); # GeometryCollection(Point(2 2))
+// Methods
+// LineString(1 1, 2 2, 3 3).length; // 3
+// GeometryCollection(Point(1 1)).append(Point 2 2); // GeometryCollection(Point(1 1), Point(2 2))
+// GeometryCollection(Point(1 1), Point(2 2)).remove(0); // GeometryCollection(Point(2 2))
 
-# Comparison expressions: > >= == <= <
-# 2 > 8; # True
-# 2 <= 8; # False
-# Point(1 1)[0] > Point(2 2)[0]; # True
+// Comparison expressions: > >= == <= <
+// 2 > 8; // True
+// 2 <= 8; // False
+// Point(1 1)[0] > Point(2 2)[0]; // True
 
-# Conditional expressions
-# Point(1 0) == Point(1 0) ? Point(2 2) : Point(3 3) # Point(2 2)
+// Conditional expressions
+// Point(1 0) == Point(1 0) ? Point(2 2) : Point(3 3) // Point(2 2)
 
-# List mapping operations with the map (pipe) symbol: |
-# LineString(1 1, 2 2) | Function(p => p + Point(1 1)); # LineString(2 2, 3 3)
-# LineString(1 1, 2 2) | Function((p, i) => Point(i i)); # Access index in second param
+// List mapping operations with the map (pipe) symbol: |
+// LineString(1 1, 2 2) | Function(p => p + Point(1 1)); // LineString(2 2, 3 3)
+// LineString(1 1, 2 2) | Function((p, i) => Point(i i)); // Access index in second param
 
-# List filter operations with the filter symbol: |~
-# LineString(1 1, 2 2, 3 3) |~ Function(p => p > Point(1 1)); # LineString(2 2, 3 3)
+// List filter operations with the filter symbol: |~
+// LineString(1 1, 2 2, 3 3) |~ Function(p => p > Point(1 1)); // LineString(2 2, 3 3)
 
-# Reduce filter opeations with the reduce symbol: |>
-# LineString(1 1, 2 2, 3 3) |> Function((curr, prev) => curr + prev); # Point(6 6)
+// Reduce filter opeations with the reduce symbol: |>
+// LineString(1 1, 2 2, 3 3) |> Function((curr, prev) => curr + prev); // Point(6 6)
 
-# Iterate list geometries
-# Points(10); # Iterate 10 points of Point(0 0) in a geometry collection
-# Points(10, Function(i => Point(i i))); # Create geometry collection of 10 specific points
+// Iterate list geometries
+// Points(10); // Iterate 10 points of Point(0 0) in a geometry collection
+// Points(10, Function(i => Point(i i))); // Create geometry collection of 10 specific points
 
-# Flatten geometry collections
-# Points(10) | Function(() => Points(10)) | Flatten; # Geometry collection of 100 points
+// Flatten geometry collections
+// Points(10) | Function(() => Points(10)) | Flatten; // Geometry collection of 100 points
 
-# Import data
-# features = IMPORT('./path/to/file.wkt')
+// Import data
+// features = IMPORT('./path/to/file.wkt')
 
-# Import data and environment
-# layer = IMPORT('./path/to/file.wktl')
+// Import data and environment
+// layer = IMPORT('./path/to/file.wktl')
 
 
 
-# NO_OUTPUT
+// NO_OUTPUT
 GEOMETRYCOLLECTION(
     POINT (30 10),
     LINESTRING (30 10, 10 30, 40 40),
@@ -77,10 +77,10 @@ myFn = Function((x, y, last) => {
     first = Point(x y);
     LineString(first, last)
 });
-myFn(1, 2, Point(3 4)); # LINESTRING(1 2, 3 4);
+myFn(1, 2, Point(3 4)); // LINESTRING(1 2, 3 4);
 fn2(fn1);
 
-# Examples
+// Examples
 
 Point(-110 38) + 
     (Generate 20 Function(x => 
@@ -119,18 +119,18 @@ Generate 5 Function(i => {
 | Flatten;
 
 rotatePoint = Function((p, angle, origin) => {
-    # Convert angle to radians
+    // Convert angle to radians
     angleRad = angle * (PI / 180);
 
-    # Translate the point to the origin
+    // Translate the point to the origin
     translatedX = p:x() - origin:x();
     translatedY = p:y() - origin:y();
 
-    # Apply rotation
+    // Apply rotation
     rotatedX = translatedX * cos(angleRad) - translatedY * sin(angleRad);
     rotatedY = translatedX * sin(angleRad) + translatedY * cos(angleRad);
 
-    # Translate the point back to the original position
+    // Translate the point back to the original position
     finalX = rotatedX + origin:x();
     finalY = rotatedY + origin:y();
 
@@ -157,18 +157,18 @@ Generate 5 Function(i => {
 
 
 rotatePoint = Function((p, angle, origin) => {
-    # Convert angle to radians
+    // Convert angle to radians
     angleRad = angle * (PI / 180);
 
-    # Translate the point to the origin
+    // Translate the point to the origin
     translatedX = p:x() - origin:x();
     translatedY = p:y() - origin:y();
 
-    # Apply rotation
+    // Apply rotation
     rotatedX = translatedX * cos(angleRad) - translatedY * sin(angleRad);
     rotatedY = translatedX * sin(angleRad) + translatedY * cos(angleRad);
 
-    # Translate the point back to the original position
+    // Translate the point back to the original position
     finalX = rotatedX + origin:x();
     finalY = rotatedY + origin:y();
 

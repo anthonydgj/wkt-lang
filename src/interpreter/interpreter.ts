@@ -489,7 +489,7 @@ export namespace Interpreter {
             signedNumericLiteral_signMissing(numericLiteral) {
                 return numericLiteral.eval();
             },
-            comment(_a, _b, _c, _d, _e) {
+            comment(_) {
                 return UNIT;
             },
             emptySet(_val) {

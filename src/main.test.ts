@@ -20,13 +20,13 @@ test('should evaluate reference programs', () => {
     result = defaultEval(content);
 
     result = defaultEval(`
-        # Multi-line functions
+        // Multi-line functions
         myFunction = Function(() => {
             a = 1;
             b = 2;
             Point(a b)
         });
-        myPoint = myFunction(); # Point(1 2)
+        myPoint = myFunction(); // Point(1 2)
         myPoint
     `)
     expect(result.geometry.coordinates).toStrictEqual([1, 2]);
@@ -258,30 +258,30 @@ test('should evaluate sequential expressions and return the last value', () => {
 // Comments
 
 test('should evaluate expressions with surrounding comments', () => {
-    let result = defaultEval(`# just a comment`);
+    let result = defaultEval(`// just a comment`);
     expect(result).toBeUndefined();
 
     result = defaultEval(`
-    # comment on one line
-    # comment on another line
+    // comment on one line
+    // comment on another line
     `);
     expect(result).toBeUndefined();
 
     result = defaultEval(`
-    # comment
-    Point(1 2) # inline comment
+    // comment
+    Point(1 2) // inline comment
     `);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([1, 2]);
 
     result = defaultEval(`
-    # comment
-    Point(1 2); # inline comment
+    // comment
+    Point(1 2); // inline comment
 
-    # Additional comment
+    // Additional comment
     Point(3 4)
 
-    # Trailing comment
+    // Trailing comment
     `);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([3, 4]);
@@ -295,7 +295,7 @@ test('should run without return value', () => {
     let result = defaultEval(``);
     expect(result).toBeUndefined();
 
-    result = defaultEval(`# just a comment`);
+    result = defaultEval(`// just a comment`);
     expect(result).toBeUndefined();
 });
 
@@ -428,7 +428,7 @@ test('should evaluate functions with parameters', () => {
             createPointOneArg(10),
             createPointTwoArgs(20, 55)
         );
-        otherLine # LINESTRING(10 55, 20 55)
+        otherLine // LINESTRING(10 55, 20 55)
     `);
     expect(result).toBeTruthy(); 
     expect(result.geometry.coordinates).toStrictEqual([[10, 55], [20, 55]]);

@@ -10,9 +10,15 @@ WktLang {
     TopLevelEnd = ExpressionDelimiter | end 
     
     // Comments
-    comment = "#" commentSpace* commentText* commentSpace* commentEnd
-    commentText = ~commentEnd any
-    commentEnd = "\n" | end
+    comment = commentBlock | commentLine 
+    commentBlock = commentBlockStart commentBlockText* commentBlockEnd
+    commentBlockText = ~commentBlockEnd any
+    commentBlockStart = "/*"
+    commentBlockEnd = "*/"
+    commentLine = "//" commentLineBody
+    commentLineBody = commentSpace* commentLineText* commentSpace* commentLineEnd
+    commentLineText = ~commentLineEnd any
+    commentLineEnd = "\n" | end
     commentSpace = " "
 
     // Expression structure
