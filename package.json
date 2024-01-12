@@ -1,6 +1,6 @@
 {
   "name": "wkt-lang",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "WKT preprocessor for geospatial data scripting",
   "repository": {
     "type": "git",
