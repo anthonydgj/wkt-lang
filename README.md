@@ -26,7 +26,7 @@ See the [Terminal Usage](#terminal-usage) section for instructions using the CLI
 
 The following examples use language constructs and built-in functions to generate geometry patterns.
 
-#### Create a line of 10 points with 1-unit spacing:
+**Create a line of 10 points with 1-unit spacing:**
 ```
 Generate 10 Function(i => Point(i 0))
 ```
@@ -35,7 +35,7 @@ Generate 10 Function(i => Point(i 0))
 
 <br>
 
-#### Create a 20x10 grid of points with 2-unit spacing starting from coordinates -110, 38:
+**Create a 20x10 grid of points with 2-unit spacing starting from coordinates -110, 38:**
 ```
 Point(-110 39) + PointGrid(20, 10, 2)
 ```
@@ -44,7 +44,7 @@ Point(-110 39) + PointGrid(20, 10, 2)
 
 <br>
 
-#### Create the same grid but introduce random offsets:
+**Create the same grid but introduce random offsets:**
 ```
 Point(-110 39) +
     PointGrid(20, 10, 2) || 
@@ -58,7 +58,7 @@ Point(-110 39) +
 
 <br>
 
-#### Rotate a 20x10 grid of points around origin by 23 degrees:
+**Rotate a 20x10 grid of points around origin by 23 degrees:**
 ```
 rotatePoint = Function((p, angle, origin) => {
     // Convert angle to radians
@@ -87,7 +87,7 @@ PointGrid(20, 10, 4)
 
 <br>
 
-#### Create several nested circle polygons:
+**Create several nested circle polygons:**
 ```
 numRings = 5;
 Generate numRings Function(i => {
