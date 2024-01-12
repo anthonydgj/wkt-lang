@@ -157,7 +157,7 @@ WktLang {
     Identifier =  basicIdentifier | specialIdentifier
     basicIdentifier =  ~nonAllowedIdentifiers id
     id = simpleLatinLetter idCharacter*
-    idCharacter = simpleLatinLetter | digit
+    idCharacter = simpleLatinLetter | digit | "_"
 	nonAllowedIdentifiers = keyword identifierEnd
     identifierEnd = end | comma | leftParen | rightParen | operator | wktSpace
 	specialIdentifier = "$?"
