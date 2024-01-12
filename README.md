@@ -61,18 +61,18 @@ Point(-110 39) +
 #### Rotate a 20x10 grid of points around origin by 23 degrees:
 ```
 rotatePoint = Function((p, angle, origin) => {
-    # Convert angle to radians
+    // Convert angle to radians
     angleRad = angle * (PI / 180);
 
-    # Translate the point to the origin
+    // Translate the point to the origin
     translatedX = p:x() - origin:x();
     translatedY = p:y() - origin:y();
 
-    # Apply rotation
+    // Apply rotation
     rotatedX = translatedX * cos(angleRad) - translatedY * sin(angleRad);
     rotatedY = translatedX * sin(angleRad) + translatedY * cos(angleRad);
 
-    # Translate the point back to the original position
+    // Translate the point back to the original position
     finalX = rotatedX + origin:x();
     finalY = rotatedY + origin:y();
 
@@ -159,9 +159,18 @@ LineString (
 
 ### Comments
 
-Comments begin with the `#` character:
+Single-line comments begin with `//`:
 ```
-# Napoli, Italy
+// Napoli, Italy
+Point(14.19 40.828)
+```
+
+Comment blocks are enclosed by `/*` and `*/`:
+```
+/* 
+    Napoli, Italy
+    (also known as Naples)
+*/
 Point(14.19 40.828)
 ```
 
@@ -169,40 +178,40 @@ Point(14.19 40.828)
 
 Coordinate values can be expressed using basic numeric arithmetic (`+ - * / ^ %`):
 ```
-Point((8 * 3) (-12 + 5)) # POINT (24 -7)
+Point((8 * 3) (-12 + 5)) // POINT (24 -7)
 ```
 
 Geometries also support basic arithmetic:
 ```
-Point(1 2) + Point(3 4) # POINT (4 6)
+Point(1 2) + Point(3 4) // POINT (4 6)
 ```
 
 Array-like geometries support array programming operations:
 ```
-LineString(1 1, 2 2, 3 3) + LineString(10 10, 10 10, 10 10); # LINESTRING (11 11, 12 12, 13 13)
-LineString(1 1, 2 2, 3 3) - Point(10 10); # LINESTRING (-9 -9, -8 -8, -7 -7)
+LineString(1 1, 2 2, 3 3) + LineString(10 10, 10 10, 10 10); // LINESTRING (11 11, 12 12, 13 13)
+LineString(1 1, 2 2, 3 3) - Point(10 10); // LINESTRING (-9 -9, -8 -8, -7 -7)
 ```
 
 ### Concatenation
 
 Array-like geometries can be combined using the concatenate (`++`) operator:
 ```
-LineString(1 1, 2 2) ++ LineString(3 3, 4 4); # LINESTRING (1 1, 2 2, 3 3, 4 4)
-MultiPoint(1 1, 2 2) ++ MultiPoint(3 3, 4 4); # MULTIPOINT (1 1, 2 2, 3 3, 4 4)
-GeometryCollection(1 1, 2 2) ++ GeometryCollection(3 3, 4 4); # GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3 3),POINT (4 4))
+LineString(1 1, 2 2) ++ LineString(3 3, 4 4); // LINESTRING (1 1, 2 2, 3 3, 4 4)
+MultiPoint(1 1, 2 2) ++ MultiPoint(3 3, 4 4); // MULTIPOINT (1 1, 2 2, 3 3, 4 4)
+GeometryCollection(1 1, 2 2) ++ GeometryCollection(3 3, 4 4); // GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3 3),POINT (4 4))
 ```
 
 Points can be appended to point array-like geometries:
 ```
-LineString(1 1, 2 2) ++ Point(3 3); # LINESTRING (1 1, 2 2, 3 3)
-MultiPoint(1 1, 2 2) ++ Point(3 3); # MULTIPOINT (1 1, 2 2, 3 3)
-GeometryCollection(1 1, 2 2) ++ Point(3 3); # GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3 3))
+LineString(1 1, 2 2) ++ Point(3 3); // LINESTRING (1 1, 2 2, 3 3)
+MultiPoint(1 1, 2 2) ++ Point(3 3); // MULTIPOINT (1 1, 2 2, 3 3)
+GeometryCollection(1 1, 2 2) ++ Point(3 3); // GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3 3))
 ```
 
 Non array-like geometries are concatenated into a `GEOMETRYCOLLECTION`:
 ```
-Point(1 1) ++ Point(2 2); # GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2))
-Point(1 1) ++ Polygon((2 2, 3 3, 4 4, 2 2)); # GEOMETRYCOLLECTION(POINT (1 1),POLYGON ((2 2, 3 3, 4 4, 2 2)))
+Point(1 1) ++ Point(2 2); // GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2))
+Point(1 1) ++ Polygon((2 2, 3 3, 4 4, 2 2)); // GEOMETRYCOLLECTION(POINT (1 1),POLYGON ((2 2, 3 3, 4 4, 2 2)))
 ```
 
 ### Variables
@@ -211,7 +220,7 @@ Variables are defined using the equal (`=`) operator:
 ```
 longitude = 2;
 latitude = 3;
-Point(longitude latitude) # POINT (2 3)
+Point(longitude latitude) // POINT (2 3)
 ```
 
 Supported data types include: 
@@ -224,26 +233,26 @@ Supported data types include:
 Geometry properties can be accessed using the accessor (`:`) operator:
 ```
 p = Point(3 4);
-p:type(); # Point
-p:x(); # 3
-p:y(); # 4
+p:type(); // Point
+p:x(); // 3
+p:y(); // 4
 
 g = GeometryCollection(Point(1 2), Point(3 4));
-g:type(); # GeometryCollection
-g:numGeometries(); # 2
-g:geometryN(1); # POINT (3 4)
+g:type(); // GeometryCollection
+g:numGeometries(); // 2
+g:geometryN(1); // POINT (3 4)
 
 l = LineString(1 2, 3 4);
-l:type(); # LineString
-l:numPoints(); # 2
-l:pointN(1); # POINT (3 4)
+l:type(); // LineString
+l:numPoints(); // 2
+l:pointN(1); // POINT (3 4)
 ```
 
 Properties can be set by calling a method with an appropriate parameter:
 ```
 p = Point(3 4);
-p:x(5); # POINT (5 4)
-p:y(6); # POINT (3 6)
+p:x(5); // POINT (5 4)
+p:y(6); // POINT (3 6)
 ```
 
 ### Conditional Expressions
@@ -252,16 +261,16 @@ Boolean values `True` and `False` can be used in logical `And`, `Or` or negation
 ```
 a = True;
 b = False;
-a And b; # False
-a Or b; # True
-!a; # False
+a And b; // False
+a Or b; // True
+!a; // False
 ``` 
 
 Numeric values can be used in comparison expressions `< <= > >= == !=`, which return a `boolean` value:
 ```
 a = Point(1 2);
 b = Point(3 4);
-a:x() < b:x() # true
+a:x() < b:x() // true
 ```
 
 Control flow can be dictated using `If-Then-Else` expressions:
@@ -269,7 +278,7 @@ Control flow can be dictated using `If-Then-Else` expressions:
 result = If Point(1 2):x() < 3
          Then (LineString(1 1, 2 2, 3 3))
          Else (Point(0 0));
-result # LINESTRING(1 1, 2 2, 3 3)
+result // LINESTRING(1 1, 2 2, 3 3)
 ```
 
 All three parts of the `If-Then-Else` expression are required. The `Then` and `Else` blocks can contain multiple lines, similar to a function body.
@@ -283,7 +292,7 @@ If (points:numGeometries() > 3) Then (
     a = LineString(1 1, 2 2);
     b = LineString(3 3, 4 4);
     a + b
-) # POINT (4 6)
+) // POINT (4 6)
 ```
 
 ### Functions
@@ -295,7 +304,7 @@ getEquatorPoint = Function(longitude => Point(longitude 0));
 
 They can be invoked using parentheses `()`:
 ```
-getEquatorPoint(14.19) # POINT (14.19 0)
+getEquatorPoint(14.19) // POINT (14.19 0)
 ```
 
 Functions can also accept multiple parameters and have function bodies spanning multiple lines. Similar to top-level expressions outside of a function, the last expression in the function body is used as the return value.
@@ -305,21 +314,21 @@ myFn = Function((x, y, last) => {
     LineString(first, last)
 });
 
-myFn(1, 2, Point(3 4)) # LINESTRING (1 2, 3 4)
+myFn(1, 2, Point(3 4)) // LINESTRING (1 2, 3 4)
 ```
 
 ### Generate Expressions
 
 Multiple geometries can be generated using the `Generate` expression by specifying an iteration count and either a geometry or a function that returns a geometry. The set of all geometries returned from a `Generate` expression are collected into a `GEOMETRYCOLLECTION`.
 ```
-Generate 3 Point(0 0); # GEOMETRYCOLLECTION(POINT (0 0),POINT (0 0),POINT (0 0))
-Generate 3 Function(x => Point(x x)) # GEOMETRYCOLLECTION(POINT (0 0),POINT (1 1),POINT (2 2))
+Generate 3 Point(0 0); // GEOMETRYCOLLECTION(POINT (0 0),POINT (0 0),POINT (0 0))
+Generate 3 Function(x => Point(x x)) // GEOMETRYCOLLECTION(POINT (0 0),POINT (1 1),POINT (2 2))
 ```
 
 The iteration count can also be specified as a variable:
 ```
 count = 3;
-Generate count Point(0 0) # GEOMETRYCOLLECTION(POINT (0 0),POINT (0 0),POINT (0 0))
+Generate count Point(0 0) // GEOMETRYCOLLECTION(POINT (0 0),POINT (0 0),POINT (0 0))
 ```
 
 ### Pipe Transformations
@@ -328,24 +337,24 @@ Generate count Point(0 0) # GEOMETRYCOLLECTION(POINT (0 0),POINT (0 0),POINT (0 
 
 The output from any expression can be used as the input to another function with the pipe (`|`) operator:
 ```
-Point(1 1) | Function(x => LineString(x, 2 2)) # LINESTRING (1 1, 2 2)
+Point(1 1) | Function(x => LineString(x, 2 2)) // LINESTRING (1 1, 2 2)
 ```
 
 Each item in an array-like geometry can be mapped using a function with the double-pipe (`||`) operator:
 ```
-LineString(1 1, 2 2, 3 3) || Function(x => x * x) # LINESTRING (1 1, 4 4, 9 9)
+LineString(1 1, 2 2, 3 3) || Function(x => x * x) // LINESTRING (1 1, 4 4, 9 9)
 ```
 
 The array map index is also available as function parameter:
 ```
-LineString(1 1, 2 2, 3 3) || Function((x, i) => x * i) # LINESTRING (0 0, 2 2, 6 6)
+LineString(1 1, 2 2, 3 3) || Function((x, i) => x * i) // LINESTRING (0 0, 2 2, 6 6)
 ```
 
 #### Filtering
 
 Array-like geometries can be filtered using the filter (`|>`) operator:
 ```
-LineString(1 1, 2 2, 3 3) |> Function((x, i) => x:x() <= 2) # LINESTRING (1 1, 2 2)
+LineString(1 1, 2 2, 3 3) |> Function((x, i) => x:x() <= 2) // LINESTRING (1 1, 2 2)
 ```
 
 ### Built-In Functions
@@ -355,19 +364,19 @@ Several built-in functions are provided to support geometry generation and trans
 #### Flatten
 `Flatten(g)` - flatten all geometries in a `GEOMETRYCOLLECTION`.
 ```
-Flatten(GeometryCollection(Point(1 1), GeometryCollection(Point(2 2)))) # GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2))
+Flatten(GeometryCollection(Point(1 1), GeometryCollection(Point(2 2)))) // GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2))
 ```
 
 #### PointGrid
 `PointGrid(x, y, spacing)` - create a grid of points with the given X and Y count, and (optional) spacing
 ```
-PointGrid(20, 10, 2) # GEOMETRYCOLLECTION(POINT (0 0),POINT (0 2), ... POINT (38 18))
+PointGrid(20, 10, 2) // GEOMETRYCOLLECTION(POINT (0 0),POINT (0 2), ... POINT (38 18))
 ```
 
 #### PointCircle
 `PointCircle(radius, count)` - create a circle of points with a given radius and point count.
 ```
-PointCircle(5, 50); # GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0.6266661678215213), ... )
+PointCircle(5, 50); // GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0.6266661678215213), ... )
 ```
 
 #### ToX
@@ -375,10 +384,10 @@ PointCircle(5, 50); # GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0
 `ToLineString(g)`, `ToMultiPoint(g)`, `ToPolygon(g)`, `ToGeometryCollection(g)` - convert an array-like geometry of points to a different geometry type
 ```
 list = GeometryCollection(Point(1 1), Point(2 2), Point(3 3));
-ToLineString(list); # LINESTRING (1 1, 2 2, 3 3)
-ToMultiPoint(list); # MULTIPOINT (1 1, 2 2, 3 3)
-ToPolygon(list); # POLYGON ((1 1, 2 2, 3 3, 1 1))
-ToGeometryCollection(list) # GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3 3))
+ToLineString(list); // LINESTRING (1 1, 2 2, 3 3)
+ToMultiPoint(list); // MULTIPOINT (1 1, 2 2, 3 3)
+ToPolygon(list); // POLYGON ((1 1, 2 2, 3 3, 1 1))
+ToGeometryCollection(list) // GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3 3))
 ```
 
 ## Build Instructions
