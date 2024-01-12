@@ -316,6 +316,15 @@ test('should declare variables', () => {
     let result = defaultEval(`a = Point(1 2)`);
     expect(result).toBeUndefined();
 
+    // support valid variable name characters
+    result = defaultEval(`
+        a = Point(1 1);
+        b2 = Point(2 2);
+        c_3 = Point(3 3);
+        GeometryCollection(a, b2, c_3)
+    `);
+    expect(result).toBeTruthy();
+
     // support variable names that include a keyword
     result = defaultEval(`pointA = Point(1 2); pointA`);
     expect(result).toBeTruthy();
