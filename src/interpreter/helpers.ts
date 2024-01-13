@@ -134,6 +134,18 @@ export const arithmeticOperation = (A: any, B: any, op: (a: any, b: any) => any)
     ) {
         return geometryCollectionPointOperation(B, A, (aPrime, bPrime) => op(bPrime, aPrime));
     }
+    if (
+        isGeometryType(GeometryType.Polygon, A) &&
+        isGeometryType(GeometryType.Point, B)
+    ) {
+        return polygonPointOperation(A, B, op);
+    }
+    if (
+        isGeometryType(GeometryType.Point, A) &&
+        isGeometryType(GeometryType.Polygon, B)
+    ) {
+        return polygonPointOperation(B, A, (aPrime, bPrime) => op(bPrime, aPrime));
+    }
 
     return undefined;
 }
@@ -210,6 +222,20 @@ export const geometryCollectionPointOperation = (
     return turf.featureCollection(A.features.map((f: typeof turf.feature) => {
         return arithmeticOperation(f, B, computeFn);
     }));
+}
+
+export const polygonPointOperation = (
+    A: turf.Feature<turf.Polygon>,
+    B: any,
+    computeFn: (a: number, b: number) => number
+) => {
+    const coords: turf.helpers.Position[][] = A.geometry.coordinates.map((coords: turf.helpers.Position[]) => {
+        return coords.map(p => [
+            computeFn(p[0], B.geometry.coordinates[0]),
+            computeFn(p[1], B.geometry.coordinates[1]),
+        ]);
+    });
+    return turf.polygon(coords);
 }
 
 export class OperationNotSupported extends Error {

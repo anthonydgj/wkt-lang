@@ -214,6 +214,22 @@ test('should support line string and point arithmetic', () => {
 
 });
 
+test('should support polygon and point arithmetic', () => {
+    let result = defaultEval(`Polygon((1 1, 2 2, 3 3, 1 1)) + Point(1 1)`);
+    expect(result.geometry.coordinates).toStrictEqual([[[2, 2], [3, 3], [4, 4], [2, 2]]]);
+    result = defaultEval(`Point(1 1) + Polygon((1 1, 2 2, 3 3, 1 1))`);
+    expect(result.geometry.coordinates).toStrictEqual([[[2, 2], [3, 3], [4, 4], [2, 2]]]);
+    result = defaultEval(`Polygon((1 1, 2 2, 3 3, 1 1)) - Point(-1 -1)`);
+    expect(result.geometry.coordinates).toStrictEqual([[[2, 2], [3, 3], [4, 4], [2, 2]]]);
+    result = defaultEval(`Point(3 3) - Polygon((1 1, 2 2, 3 3, 1 1))`);
+    expect(result.geometry.coordinates).toStrictEqual([[[2, 2], [1, 1], [0, 0], [2, 2]]]);
+    result = defaultEval(`Polygon((8 8, 8 0, 0 0, 0 8, 8 8), (6 6, 6 2, 2 2, 2 6, 6 6)) + Point(1 1)`)
+    expect(result.geometry.coordinates).toStrictEqual([
+        [[9, 9], [9, 1], [1, 1], [1, 9], [9, 9]],
+        [[7, 7], [7, 3], [3, 3], [3, 7], [7, 7]]
+    ]);
+});
+
 test('should support variable type arithmetic', () => {
     let result;
     result = defaultEval(`Point(1 2) + 3`);
@@ -244,7 +260,6 @@ test('should support variable type arithmetic', () => {
     expect(result).toBeTruthy();
     expect(result?.features?.map((f: any) => f.geometry?.coordinates)).toStrictEqual([[44, 44], [22, 22]]);
 });
-
 
 // Sequential expressions
 
@@ -877,3 +892,4 @@ test('should access geometry properties', () => {
     result = defaultEval(`Polygon((1 1, 2 2, 3 3, 1 1)):type() == Polygon`);
     expect(result).toBe(true);
 });
+
