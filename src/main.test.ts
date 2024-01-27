@@ -692,6 +692,10 @@ test('should access line string values', () => {
     result = defaultEval(`l = LineString(1 2, 3 4); l:pointN(1)`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([3, 4]);
+    result = defaultEval(`l = LineString(1 2, 3 4); l:pointN(l:numPoints() - 1)`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([3, 4]);
+
 });
 
 test('should support conditionals', () => {
@@ -902,3 +906,27 @@ test('should access geometry properties', () => {
     result = defaultEval(`Polygon((1 1, 2 2, 3 3, 1 1)):type() == Polygon`);
     expect(result).toBe(true);
 });
+
+it('should handle recursion', () => {
+    let result = defaultEval(`
+        build_list = Function(n => {
+            # Base case
+            if n == 0 then (
+                GeometryCollection()
+            ) else (
+                # Recursive call to build the rest of the list
+                rest_of_list = build_list(n - 1);
+                
+                # Add the current element to the list
+                current_element = Point(n n);
+                
+                # Combine the current element with the rest of the list
+                rest_of_list ++ GeometryCollection(current_element)
+            )
+        });
+        build_list(3)
+    `);
+    expect(result?.features?.map((f: any) => f.geometry?.coordinates))
+        .toStrictEqual([[1, 1], [2, 2], [3, 3]]);
+});
+
