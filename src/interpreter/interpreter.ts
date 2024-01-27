@@ -122,21 +122,29 @@ export namespace Interpreter {
                     switch (property.toLocaleLowerCase()) {
                         case 'x':
                             if (params?.length > 0) {
+                                // setter
                                 if (params.length === 1) {
-                                    value.geometry.coordinates[0] = params[0];
-                                    return value;
+                                    return turf.point([
+                                        params[0],
+                                        value.geometry.coordinates[1]
+                                    ]);
                                 }
                                 throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${params}`)
                             }
+                            // getter
                             return value.geometry.coordinates[0];
                         case 'y':
                             if (params?.length > 0) {
+                                // setter
                                 if (params.length === 1) {
-                                    value.geometry.coordinates[1] = params[0];
-                                    return value;
+                                    return turf.point([
+                                        value.geometry.coordinates[0],
+                                        params[0]
+                                    ]);
                                 }
                                 throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${params}`)
                             }
+                            // getter
                             return value.geometry.coordinates[1];
                     }
                 } else if (isGeometryType(GeometryType.FeatureCollection, value)) {

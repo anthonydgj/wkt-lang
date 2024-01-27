@@ -637,7 +637,7 @@ test('should access point coordinates', () => {
     expect(result).toBe(3);
 });
 
-test('should set point coordinates', () => {
+test('should update point coordinates', () => {
     let result;
     result = defaultEval(`Point(2 3):x(4)`);
     expect(result).toBeTruthy();
@@ -652,6 +652,16 @@ test('should set point coordinates', () => {
     result = defaultEval(`a = Point(2 3); a:y(5)`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 5]);
+});
+
+test('should have immutable updates using copies', () => {
+    let result;
+    result = defaultEval(`a = Point(2 3); a:x(4); a`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([2, 3]);
+    result = defaultEval(`a = Point(2 3); a:y(5); a`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([2, 3]);
 });
 
 test('should access geometry collection values', () => {
@@ -892,4 +902,3 @@ test('should access geometry properties', () => {
     result = defaultEval(`Polygon((1 1, 2 2, 3 3, 1 1)):type() == Polygon`);
     expect(result).toBe(true);
 });
-
