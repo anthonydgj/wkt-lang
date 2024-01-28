@@ -1,6 +1,7 @@
+import * as wellknown from 'wellknown';
+
 import { Interpreter } from "./interpreter/interpreter";
 import { Scope } from "./interpreter/scope";
-import { convertToWK } from 'wkt-parser-helper';
 
 export enum OutputFormat {
     WKT = 'WKT',
@@ -25,7 +26,7 @@ export function evaluate(input: string, options: Options = DEFAULT_OPTIONS) {
         options?.outputFormat === OutputFormat.WKT &&
         typeof result === 'object'
     ) {
-        return convertToWK(result);
+        return wellknown.stringify(result);
     }
     return result;
 }
