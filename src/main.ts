@@ -1,3 +1,4 @@
+import * as turf from '@turf/turf';
 import * as wellknown from 'wellknown';
 
 import { Interpreter } from "./interpreter/interpreter";
@@ -22,11 +23,15 @@ export function evaluate(input: string, options: Options = DEFAULT_OPTIONS) {
     if (result === null) {
         return undefined;
     }
-    if (
-        options?.outputFormat === OutputFormat.WKT &&
-        typeof result === 'object'
-    ) {
-        return wellknown.stringify(result);
+    if (typeof result === 'object') {
+        switch(options?.outputFormat) {
+            case OutputFormat.WKT:
+                return wellknown.stringify(result);
+            case OutputFormat.GeoJSON:
+                return turf.feature(result) as any;
+            default:
+                break;
+        }
     }
     return result;
 }

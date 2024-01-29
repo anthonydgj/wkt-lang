@@ -9,8 +9,8 @@ export namespace BuiltInFunctions {
     const FlattenHelper = (value: any) => {
         const flattenedValues: any[] = [];
         if (!!value) {
-            if (value?.type === GeometryType.FeatureCollection) {
-                for (const item of value.features) {
+            if (value?.type === GeometryType.GeometryCollection) {
+                for (const item of value.geometries) {
                     flattenedValues.push(...FlattenHelper(item));
                 }
             } else {
@@ -21,7 +21,10 @@ export namespace BuiltInFunctions {
     };
 
     export const Flatten = (value: any) => {
-        return turf.featureCollection(FlattenHelper(value));
+        if (value?.type === GeometryType.GeometryCollection) {
+            return turf.geometryCollection(FlattenHelper(value)).geometry;
+        }
+        return value;
     };
 
     export const PointCircle = (radius: number, count: number) => {
@@ -31,31 +34,31 @@ export namespace BuiltInFunctions {
             const angle = i * angleIncrement;
             const x = radius * Math.cos(angle);
             const y = radius * Math.sin(angle);
-            circlePoints.push(turf.point([x, y]));
+            circlePoints.push(turf.point([x, y]).geometry);
         }
-        return turf.featureCollection(circlePoints);
+        return turf.geometryCollection(circlePoints).geometry;
     };
 
     export const PointGrid = (x: number, y: number, spacing = 1) => {
-        const points = [];
+        const points: any[] = [];
         for (let i=0; i<x; i++) {
             for (let j=0; j<y; j++) {
-                const point = turf.point([i * spacing, j * spacing]);
+                const point = turf.point([i * spacing, j * spacing]).geometry;
                 points.push(point);
             }
         }
-        return turf.featureCollection(points);
+        return turf.geometryCollection(points).geometry;
     }
 
     const getPointsList = (value: any) => {
         let points;
-        if (isGeometryType(GeometryType.FeatureCollection, value)) {
-            points = value?.features.map((f: any) => f.geometry.coordinates);
+        if (isGeometryType(GeometryType.GeometryCollection, value)) {
+            points = value?.geometries.map((f: any) => f.coordinates);
         } else if (
             isGeometryType(GeometryType.LineString, value) ||
             isGeometryType(GeometryType.MultiPoint, value)
         ) {
-            points = value?.geometry.coordinates;
+            points = value?.coordinates;
         }
         if (points) {
             return points;
@@ -65,12 +68,12 @@ export namespace BuiltInFunctions {
 
     export const ToLineString = (value: any) => {
         const pointsList = getPointsList(value);
-        return turf.lineString(pointsList);
+        return turf.lineString(pointsList).geometry;
     };
 
     export const ToMultiPoint = (value: any) => {
         const pointsList = getPointsList(value);
-        return turf.multiPoint(pointsList);
+        return turf.multiPoint(pointsList).geometry;
     };
 
     export const ToPolygon = (value: any) => {
@@ -78,18 +81,18 @@ export namespace BuiltInFunctions {
         // Auto-close polygon
         if (pointsList.length > 0) {
             if (!booleanEqual(
-                turf.point(pointsList[0]),
-                turf.point(pointsList[pointsList.length - 1])
+                turf.point(pointsList[0]).geometry,
+                turf.point(pointsList[pointsList.length - 1]).geometry
             )) {
                 pointsList.push(pointsList[0]);
             }
         }
-        return turf.polygon([pointsList]);
+        return turf.polygon([pointsList]).geometry;
     };
 
     export const ToGeometryCollection = (value: any) => {
         const pointsList = getPointsList(value);
-        return turf.featureCollection(pointsList.map((p: any) => turf.point(p)));
+        return turf.geometryCollection(pointsList.map((p: any) => turf.point(p).geometry)).geometry;
     };
 
 }

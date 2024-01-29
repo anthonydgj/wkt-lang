@@ -27,7 +27,7 @@ export const isGeometryType = (type: GeometryType, ...values: any) => {
 export const getGeometryType = (value: any, isForDisplay = false): GeometryType | undefined => {
     if(typeof value === 'object') {
         const type = value?.geometry?.type || value?.type
-        if (isForDisplay && type === GeometryType.FeatureCollection) {
+        if (isForDisplay && type === GeometryType.GeometryCollection) {
             return GeometryType.GeometryCollection;
         }
         return type;
@@ -50,9 +50,9 @@ export const getArrayLikeItems = (value: any) => {
         isGeometryType(GeometryType.LineString, value) ||
         isGeometryType(GeometryType.MultiPoint, value)
     ) {
-        return value.geometry.coordinates;
-    } else if (isGeometryType(GeometryType.FeatureCollection, value)) {
-        return value.features;
+        return value.coordinates;
+    } else if (isGeometryType(GeometryType.GeometryCollection, value)) {
+        return value.geometries;
     }
     return undefined;
 };
@@ -84,10 +84,10 @@ export const arithmeticOperation = (A: any, B: any, op: (a: any, b: any) => any)
       return op(A, B);  
     }
     if (isNumber(A) && isAnyGeometryType(B)) {
-        return arithmeticOperation(turf.point([A, A]), B, op);
+        return arithmeticOperation(turf.point([A, A]).geometry, B, op);
     }
     if (isNumber(B) && isAnyGeometryType(A)) {
-        return arithmeticOperation(A, turf.point([B, B]), op);
+        return arithmeticOperation(A, turf.point([B, B]).geometry, op);
     }
     if (isGeometryType(GeometryType.Point, A, B)) {
         return pointOperation(A, B, op);
@@ -123,14 +123,14 @@ export const arithmeticOperation = (A: any, B: any, op: (a: any, b: any) => any)
         return multiPointPointOperation(B, A, (aPrime, bPrime) => op(bPrime, aPrime));
     }
     if (
-        isGeometryType(GeometryType.FeatureCollection, A) &&
+        isGeometryType(GeometryType.GeometryCollection, A) &&
         isGeometryType(GeometryType.Point, B)
     ) {
         return geometryCollectionPointOperation(A, B, op);
     }
     if (
         isGeometryType(GeometryType.Point, A) &&
-        isGeometryType(GeometryType.FeatureCollection, B)
+        isGeometryType(GeometryType.GeometryCollection, B)
     ) {
         return geometryCollectionPointOperation(B, A, (aPrime, bPrime) => op(bPrime, aPrime));
     }
@@ -156,9 +156,9 @@ export const pointOperation = (
     computeFn: (a: number, b: number) => number
 ) => {
     return turf.point([
-        computeFn(A.geometry.coordinates[0], B.geometry.coordinates[0]),
-        computeFn(A.geometry.coordinates[1], B.geometry.coordinates[1]),
-    ]);
+        computeFn(A.coordinates[0], B.coordinates[0]),
+        computeFn(A.coordinates[1], B.coordinates[1]),
+    ]).geometry;
 }
 
 
@@ -167,12 +167,12 @@ export const lineStringOperation = (
     B: any,
     computeFn: (a: number, b: number) => number
 ) => {
-    return turf.lineString(A.geometry.coordinates.map((p: number[], index: number) => {
+    return turf.lineString(A.coordinates.map((p: number[], index: number) => {
         return [
-            computeFn(p[0], B.geometry.coordinates[index][0]),
-            computeFn(p[1], B.geometry.coordinates[index][1]),
+            computeFn(p[0], B.coordinates[index][0]),
+            computeFn(p[1], B.coordinates[index][1]),
         ];
-    }));
+    })).geometry;
 }
 
 export const multiPointOperation = (
@@ -180,12 +180,12 @@ export const multiPointOperation = (
     B: any,
     computeFn: (a: number, b: number) => number
 ) => {
-    return turf.multiPoint(A.geometry.coordinates.map((p: number[], index: number) => {
+    return turf.multiPoint(A.coordinates.map((p: number[], index: number) => {
         return [
-            computeFn(p[0], B.geometry.coordinates[index][0]),
-            computeFn(p[1], B.geometry.coordinates[index][1]),
+            computeFn(p[0], B.coordinates[index][0]),
+            computeFn(p[1], B.coordinates[index][1]),
         ];
-    }));
+    })).geometry;
 }
 
 export const lineStringPointOperation = (
@@ -193,12 +193,12 @@ export const lineStringPointOperation = (
     B: any,
     computeFn: (a: number, b: number) => number
 ) => {
-    return turf.lineString(A.geometry.coordinates.map((p: number[]) => {
+    return turf.lineString(A.coordinates.map((p: number[]) => {
         return [
-            computeFn(p[0], B.geometry.coordinates[0]),
-            computeFn(p[1], B.geometry.coordinates[1]),
+            computeFn(p[0], B.coordinates[0]),
+            computeFn(p[1], B.coordinates[1]),
         ];
-    }));
+    })).geometry;
 }
 
 export const multiPointPointOperation = (
@@ -206,12 +206,12 @@ export const multiPointPointOperation = (
     B: any,
     computeFn: (a: number, b: number) => number
 ) => {
-    return turf.multiPoint(A.geometry.coordinates.map((p: number[]) => {
+    return turf.multiPoint(A.coordinates.map((p: number[]) => {
         return [
-            computeFn(p[0], B.geometry.coordinates[0]),
-            computeFn(p[1], B.geometry.coordinates[1]),
+            computeFn(p[0], B.coordinates[0]),
+            computeFn(p[1], B.coordinates[1]),
         ];
-    }));
+    })).geometry;
 }
 
 export const geometryCollectionPointOperation = (
@@ -219,23 +219,23 @@ export const geometryCollectionPointOperation = (
     B: any,
     computeFn: (a: number, b: number) => number
 ) => {
-    return turf.featureCollection(A.features.map((f: typeof turf.feature) => {
+    return turf.geometryCollection(A.geometries.map((f: any) => {
         return arithmeticOperation(f, B, computeFn);
-    }));
+    })).geometry;
 }
 
 export const polygonPointOperation = (
-    A: turf.Feature<turf.Polygon>,
+    A: turf.Polygon,
     B: any,
     computeFn: (a: number, b: number) => number
 ) => {
-    const coords: turf.helpers.Position[][] = A.geometry.coordinates.map((coords: turf.helpers.Position[]) => {
+    const coords: turf.helpers.Position[][] = A.coordinates.map((coords: turf.helpers.Position[]) => {
         return coords.map(p => [
-            computeFn(p[0], B.geometry.coordinates[0]),
-            computeFn(p[1], B.geometry.coordinates[1]),
+            computeFn(p[0], B.coordinates[0]),
+            computeFn(p[1], B.coordinates[1]),
         ]);
     });
-    return turf.polygon(coords);
+    return turf.polygon(coords).geometry;
 }
 
 export class OperationNotSupported extends Error {

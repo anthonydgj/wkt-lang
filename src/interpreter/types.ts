@@ -7,8 +7,7 @@ export enum GeometryType {
     MultiPoint = 'MultiPoint',
     MultiLineString = 'MultiLineString',
     MultiPolygon = 'MultiPolygon',
-    GeometryCollection = 'GeometryCollection',
-    FeatureCollection = 'FeatureCollection',
+    GeometryCollection = 'GeometryCollection'
 }
 
 export type Unit = null;
