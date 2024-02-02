@@ -1,10 +1,10 @@
+import * as chalk from 'chalk';
 import * as fs from 'fs';
-import * as yargs from 'yargs'
 
 import { Options, OutputFormat, evaluate } from "../src/main";
 
 import { Interpreter } from '../src/interpreter/interpreter';
-import chalk from 'chalk';
+import yargs from 'yargs'
 
 const readline = require('readline');
 

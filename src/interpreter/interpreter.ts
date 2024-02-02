@@ -396,7 +396,7 @@ export namespace Interpreter {
                 return exp.eval();
             },
             GeometryCollectionText_present(_leftParen, list, _rightParen) {
-                const geometries = (list || []).asIteration().children.map(c => c.eval());
+                const geometries = ((list || []) as any).asIteration().children.map((c: any) => c.eval());
                 return turf.geometryCollection(geometries).geometry;
             },
             MultiPolygonText_present(_leftParen, list, _rightParen) {
