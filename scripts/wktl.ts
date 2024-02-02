@@ -24,6 +24,10 @@ const args = yargs.command(`wkt ${input_file}`, 'WKT script interpreter')
         alias: 'i',
         boolean: true
     })
+    .option('evaluate', {
+        alias: 'e',
+        string: true
+    })
     .parseSync();
 
 const getJsonString = (json: any) => {
@@ -37,25 +41,26 @@ const options: Options = {
     scope: Interpreter.createGlobalScope()  // shared scope across evaluations
 };
 
+const evaluateScript = args.evaluate;
 const inputFiles = args._;
 const isInteractive = args.interactive;
-let finalResult;
+let result;
+
+if (evaluateScript) {
+    result = evaluate(evaluateScript, options);
+}
 
 if (inputFiles) {
     inputFiles.forEach(inputFile => {
         const input = fs.readFileSync(inputFile, 'utf-8');
 
-        let result = evaluate(input, options);
+        result = evaluate(input, options);
         if (options.outputFormat === OutputFormat.GeoJSON) {
             try {
                 result = getJsonString(result);
             } catch(err) {
                 // return raw output
             }
-        }
-
-        if (typeof result !== 'undefined') {
-            finalResult = result;
         }
     })
 }
@@ -113,5 +118,7 @@ prompt();
          // end of input
      });
 } else {
-    console.log(finalResult);
+    if (typeof result !== 'undefined') {
+        console.log(result);
+    }
 }

@@ -127,6 +127,12 @@ All evaluated files, including the interactive environment, will share the same 
 npx ts-node ./scripts/wktl.ts ./myConstants.wktl ./myFunctions.wktl -i
 ```
 
+Expressions can also be passed in directly with the `--evaluate` (or `-e`) flag.
+```
+npx ts-node ./scripts/wktl.ts -e "Point(1 1) + Point(2 2)"
+```
+
+
 <br>
 
 
