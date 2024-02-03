@@ -4,7 +4,7 @@
 
 Basic support is currently available for the following 2D geometries: `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `GEOMETRYCOLLECTION`.
 
-🌍 **Try out the language at [geojsonscript.io](https://geojsonscript.io?lang=WktLang) with the `wkt-lang` code editor option selected.**
+**Try out the language at [geojsonscript.io](https://geojsonscript.io?lang=WktLang) with the `wkt-lang` code editor option selected.**
 
 
 ## Usage
@@ -105,10 +105,15 @@ Generate numRings Function(i => {
 
 The `wktl.ts` script can be used to evaluate code and output the resulting WKT:
 ```
-npx ts-node ./scripts/wktl.ts ./myScript.wktl
+npx ts-node ./scripts/wktl.ts --help
 ```
 
-Following the [build instructions](#build-instructions), a `wktl` binary application can be created and used:
+Following the [build instructions](#build-instructions), a `wktl` binary application can be used:
+```
+wktl --help
+```
+
+To evaluate code and output the resulting WKT, specify one or more input files:
 ```
 wktl ./myScript.wktl
 ```
