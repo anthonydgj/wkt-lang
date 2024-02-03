@@ -108,14 +108,19 @@ The `wktl.ts` script can be used to evaluate code and output the resulting WKT:
 npx ts-node ./scripts/wktl.ts ./myScript.wktl
 ```
 
+Following the [build instructions](#build-instructions), a `wktl` binary application can be created and used:
+```
+wktl ./myScript.wktl
+```
+
 To output GeoJSON instead of WKT, add the `--geojson` flag:
 ```
-npx ts-node ./scripts/wktl.ts ./myScript.wktl --geojson
+wktl ./myScript.wktl --geojson
 ```
 
 To evaluate expressions interactively in a read-eval-print loop (REPL), use the `--interactive` (or `-i`) flag.
 ```
-npx ts-node ./scripts/wktl.ts -i
+wktl -i
 ```
 
 <br>
@@ -124,14 +129,30 @@ npx ts-node ./scripts/wktl.ts -i
 
 All evaluated files, including the interactive environment, will share the same scope. This means that any variables defined in a script file will be accessible in following scripts and the interactive environment, if specified. For example, in the following command, `myConstants.wktl` variables will be accessible to `myFunctions.wktl`, and variables in both scripts will be accessible in the interactive environment.
 ```
-npx ts-node ./scripts/wktl.ts ./myConstants.wktl ./myFunctions.wktl -i
+wktl ./myConstants.wktl ./myFunctions.wktl -i
 ```
 
-Expressions can also be passed in directly with the `--evaluate` (or `-e`) flag.
+<br>
+
+Expressions can be passed in directly with the `--evaluate` (or `-e`) flag.
 ```
-npx ts-node ./scripts/wktl.ts -e "Point(1 1) + Point(2 2)"
+wktl -e "Point(1 1) + Point(2 2)"
 ```
 
+Any variables defined in the `--evaluate` script can be used in following script files. For example, the following `path.wktl` script references an undefined `start` variable:
+```
+start ++ GeometryCollection(Point(2 2), Point(3 3), Point(4 4))
+```
+
+When evaluated with the following command:
+```
+wktl -e "start = Point(1 1)" path.wktl
+```
+
+The `start` variable will be defined in the `--evaluate` argument and the output will be:
+```
+GEOMETRYCOLLECTION (POINT (1 1), GEOMETRYCOLLECTION (POINT (2 2), POINT (3 3), POINT (4 4)))
+```
 
 <br>
 
@@ -393,6 +414,16 @@ ToGeometryCollection(list) # GEOMETRYCOLLECTION(POINT (1 1),POINT (2 2),POINT (3
 ```
 npm install
 npm run build
+```
+
+To build the CLI binary, run:
+```
+npm run build-all
+```
+
+The binary will be available at:
+```
+dist/bin/wktl
 ```
 
 ## Testing Instructions
