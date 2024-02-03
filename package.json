@@ -29,6 +29,7 @@
   },
   "scripts": {
     "build": "tsup --config ./tsup.config.ts",
+    "build-all": "npm run build && pkg ./dist/wktl/wktl.cjs -t=latest --out-path dist/bin/",
     "test": "jest"
   },
   "author": "AnthonyDGJ",
