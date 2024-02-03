@@ -1,9 +1,9 @@
-import * as chalk from 'chalk';
 import * as fs from 'fs';
 
 import { Options, OutputFormat, evaluate } from "../src/main";
 
 import { Interpreter } from '../src/interpreter/interpreter';
+import chalk from 'chalk';
 import yargs from 'yargs'
 
 const readline = require('readline');
@@ -45,12 +45,14 @@ const evaluateScript = args.evaluate;
 const inputFiles = args._;
 const isInteractive = args.interactive;
 let result;
+let hasEvaluated = false;
 
 if (evaluateScript) {
     result = evaluate(evaluateScript, options);
+    hasEvaluated = true;
 }
 
-if (inputFiles) {
+if (inputFiles && inputFiles.length > 0) {
     inputFiles.forEach(inputFile => {
         const input = fs.readFileSync(inputFile, 'utf-8');
 
@@ -62,7 +64,8 @@ if (inputFiles) {
                 // return raw output
             }
         }
-    })
+    });
+    hasEvaluated = true;
 }
 
 // Run interactive mode
@@ -118,7 +121,11 @@ prompt();
          // end of input
      });
 } else {
-    if (typeof result !== 'undefined') {
-        console.log(result);
+    if (hasEvaluated) {
+        if (typeof result !== 'undefined') {
+            console.log(result);
+        }
+    } else {
+        yargs.showHelp();
     }
 }
