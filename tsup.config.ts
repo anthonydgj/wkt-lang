@@ -26,4 +26,13 @@ export default [
     outDir: "dist/esm",
     format: "esm",
   }),
+  defineConfig({
+    ...baseOptions,
+    entry: ["scripts/wktl.ts"],
+    skipNodeModulesBundle: false,
+    splitting: false,
+    outDir: "dist/wktl",
+    format: "cjs",
+    outExtension: () => ({ js: ".cjs" }),
+  }),
 ];
