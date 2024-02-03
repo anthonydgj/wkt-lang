@@ -7,27 +7,34 @@ import chalk from 'chalk';
 import yargs from 'yargs'
 
 const readline = require('readline');
+const packageJson = require('../package.json')
 
 const input_file = 'input_files';
-const args = yargs.command(`wkt ${input_file}`, 'WKT script interpreter')
+const version = packageJson.version;
+const args = yargs.command('$0', `${packageJson.description}\nVersion: ${version}`)
     .positional(input_file, {
         array: true,
-        alias: 'inputFiles'
+        description: 'List of 1 or more input files'
     })
     .option('format', {
         choices: Object.values(OutputFormat) as OutputFormat[],
+        description: 'Output format'
     })
     .option('geojson', {
-        boolean: true
+        boolean: true,
+        description: 'Output as GeoJSON'
     })
     .option('interactive', {
         alias: 'i',
-        boolean: true
+        boolean: true,
+        description: 'Launch an interactive session'
     })
     .option('evaluate', {
         alias: 'e',
-        string: true
+        string: true,
+        description: 'Evaluate the specified script text'
     })
+    .version(version)
     .parseSync();
 
 const getJsonString = (json: any) => {
