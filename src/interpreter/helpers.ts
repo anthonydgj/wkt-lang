@@ -135,6 +135,18 @@ export const arithmeticOperation = (A: any, B: any, op: (a: any, b: any) => any)
         return geometryCollectionPointOperation(B, A, (aPrime, bPrime) => op(bPrime, aPrime));
     }
     if (
+        isGeometryType(GeometryType.MultiLineString, A) &&
+        isGeometryType(GeometryType.Point, B)
+    ) {
+        return multiLineStringPointOperation(A, B, op);
+    }
+    if (
+        isGeometryType(GeometryType.Point, A) &&
+        isGeometryType(GeometryType.MultiLineString, B)
+    ) {
+        return multiLineStringPointOperation(B, A, (aPrime, bPrime) => op(bPrime, aPrime));
+    }
+    if (
         isGeometryType(GeometryType.Polygon, A) &&
         isGeometryType(GeometryType.Point, B)
     ) {
@@ -238,8 +250,23 @@ export const polygonPointOperation = (
     return turf.polygon(coords).geometry;
 }
 
+export const multiLineStringPointOperation = (
+    A: turf.MultiLineString,
+    B: any,
+    computeFn: (a: number, b: number) => number
+) => {
+    const coords: turf.helpers.Position[][] = A.coordinates.map((coords: turf.helpers.Position[]) => {
+        return coords.map(p => [
+            computeFn(p[0], B.coordinates[0]),
+            computeFn(p[1], B.coordinates[1]),
+        ]);
+    });
+    return turf.multiLineString(coords).geometry;
+}
+
 export class OperationNotSupported extends Error {
     constructor() {
         super("Operation not supported");
     }
 }
+

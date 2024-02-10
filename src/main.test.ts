@@ -9,7 +9,7 @@ const options: Options = {
 };
 
 const defaultEval = (input: string, opts = options) => evaluate(input, opts);
-/*
+
 // Example files
 test('should evaluate reference programs', () => {
     let content = fs.readFileSync('./examples/reference.wktl', 'utf-8');
@@ -31,7 +31,7 @@ test('should evaluate reference programs', () => {
     `)
     expect(result.geometry.coordinates).toStrictEqual([1, 2]);
 });
-*/
+
 // Basic geometry structures
 
 test('should create points', () => {
@@ -258,6 +258,36 @@ test('should support variable type arithmetic', () => {
     result = defaultEval(`44 / GeometryCollection(1 1, 2 2)`);
     expect(result).toBeTruthy();
     expect(result?.geometry.geometries?.map((f: any) => f.coordinates)).toStrictEqual([[44, 44], [22, 22]]);
+
+    result = defaultEval(`
+    GeometryCollection(
+        Point(1 1),
+        MultiPoint(1 1, 2 2),
+        LineString(1 1, 2 2, 3 3),
+        MultiLineString((1 1, 2 2, 3 3), (4 4, 5 5, 6 6)),
+        Polygon((1 1, 2 2, 3 3, 1 1), (7 7, 8 8, 9 9, 7 7)),
+        GeometryCollection(
+            Point(1 1),
+            MultiPoint(1 1, 2 2),
+            LineString(1 1, 2 2, 3 3),
+            MultiLineString((1 1, 2 2, 3 3), (4 4, 5 5, 6 6)),
+            Polygon((1 1, 2 2, 3 3, 1 1), (7 7, 8 8, 9 9, 7 7))
+        )
+    ) + 3
+    `);
+    expect(result).toBeTruthy();
+    let geometries = result?.geometry.geometries;
+    expect(geometries[0].coordinates).toStrictEqual([4, 4]);
+    expect(geometries[1].coordinates).toStrictEqual([[4, 4], [5, 5]]);
+    expect(geometries[2].coordinates).toStrictEqual([[4, 4], [5, 5], [6, 6]]);
+    expect(geometries[3].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6]], [[7, 7], [8, 8], [9, 9]]]);
+    expect(geometries[4].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6], [4, 4]], [[10, 10], [11, 11], [12, 12], [10, 10]]]);
+    geometries = geometries[5].geometries;
+    expect(geometries[0].coordinates).toStrictEqual([4, 4]);
+    expect(geometries[1].coordinates).toStrictEqual([[4, 4], [5, 5]]);
+    expect(geometries[2].coordinates).toStrictEqual([[4, 4], [5, 5], [6, 6]]);
+    expect(geometries[3].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6]], [[7, 7], [8, 8], [9, 9]]]);
+    expect(geometries[4].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6], [4, 4]], [[10, 10], [11, 11], [12, 12], [10, 10]]]);
 });
 
 // Sequential expressions
