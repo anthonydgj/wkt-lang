@@ -265,8 +265,15 @@ export const multiLineStringPointOperation = (
 }
 
 export class OperationNotSupported extends Error {
-    constructor() {
-        super("Operation not supported");
+    constructor(message: string) {
+        super(`Operation not supported: ${message}`);
     }
 }
 
+export function toString(value: any) {
+    try {
+        return JSON.stringify(value);
+    } catch (err) {
+        return value;
+    }
+}

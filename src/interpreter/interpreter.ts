@@ -3,7 +3,7 @@ import * as ohm from 'ohm-js';
 import * as turf from '@turf/turf'
 
 import { GeometryType, UNIT } from './types';
-import { OperationNotSupported, arithmeticOperationExp, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber } from './helpers';
+import { OperationNotSupported, arithmeticOperationExp, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber, toString } from './helpers';
 import { Scope, ScopeBindings } from './scope';
 
 import { BuiltInFunctions } from './built-in-functions';
@@ -82,12 +82,12 @@ export namespace Interpreter {
             CompareExp(v1, op, v2) {
                 const value1 = v1.eval();
                 if (!isNumber(value1)) {
-                    throw new Error(`Expected a number for ${v1.sourceString} but got: ${value1}`)
+                    throw new Error(`Expected a number for ${v1.sourceString} but got: ${toString(value1)}`)
                 }
                 const operator = op.sourceString;
                 const value2 = v2.eval();
                 if (!isNumber(value2)) {
-                    throw new Error(`Expected a number for ${v2.sourceString} but got: ${value2}`)
+                    throw new Error(`Expected a number for ${v2.sourceString} but got: ${toString(value2)}`)
                 }
                 switch (operator.trim()) {
                     case "<":
@@ -107,7 +107,7 @@ export namespace Interpreter {
                 const params = i.eval();
 
                 if (!isAnyGeometryType(value)) {
-                    throw new Error(`Expected a geometry type for value "${v.sourceString}" but got: ${value}`);
+                    throw new Error(`Expected a geometry type for value "${v.sourceString}" but got: ${toString(value)}`);
                 }
 
                 switch (property.toLocaleLowerCase()) {
@@ -129,7 +129,7 @@ export namespace Interpreter {
                                         value.coordinates[1]
                                     ]).geometry;
                                 }
-                                throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${params}`)
+                                throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
                             }
                             // getter
                             return value.coordinates[0];
@@ -142,7 +142,7 @@ export namespace Interpreter {
                                         params[0]
                                     ]).geometry;
                                 }
-                                throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${params}`)
+                                throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
                             }
                             // getter
                             return value.coordinates[1];
@@ -154,7 +154,7 @@ export namespace Interpreter {
                                 const index = parseInt(params[0]);
                                 return value.geometries[index];
                             }
-                            throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${params}`)
+                            throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
                         case 'numgeometries':
                             return value.geometries.length;
                         }
@@ -165,13 +165,13 @@ export namespace Interpreter {
                                 const index = parseInt(params[0]);
                                 return turf.point(value.coordinates[index]).geometry;
                             }
-                            throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${params}`)
+                            throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
                         case 'numpoints':
                             return value.coordinates.length;
                         }
                 }
 
-                throw new Error(`Property "${property}" not accessible on object: ${JSON.stringify(value)}`);
+                throw new Error(`Property "${property}" not accessible on object: ${toString(value)}`);
             },
             ConcatExp(g1, _op, g2) {
                 const geom1 = g1.eval();
@@ -180,7 +180,7 @@ export namespace Interpreter {
                 const type1 = getGeometryType(geom1);
                 const type2 = getGeometryType(geom2);
                 if (!type1 || !type2) {
-                    throw new Error(`Expected geometry types for concatenation but found geom1: ${geom1} and geom2: ${geom2}`);
+                    throw new Error(`Expected geometry types for concatenation but found geom1: ${toString(geom1)} and geom2: ${toString(geom2)}`);
                 }
                 
                 if (type1 === type2) {
@@ -299,7 +299,7 @@ export namespace Interpreter {
             GenerateExp(_keyword, numExp, valueExp) {
                 const num = numExp.eval();
                 if (!Number.isInteger(num)) {
-                    throw new Error(`Expected integer but got: ${num}`);
+                    throw new Error(`Expected integer but got: ${toString(num)}`);
                 }
                 let value = valueExp.eval();
                 let mapFn;
@@ -308,13 +308,13 @@ export namespace Interpreter {
                 } else if (isAnyGeometryType(value)) {
                     mapFn = () => value;
                 } else {
-                    throw new Error(`Expected geometry type or function but got: ${value}`);
+                    throw new Error(`Expected geometry type or function but got: ${toString(value)}`);
                 }
                 const items: any[] = [];
                 for (let i=0; i<num; i++) {
                     const result = mapFn(i);
                     if (!isAnyGeometryType(result)) {
-                        throw new Error(`Expected geometry type return value but got: ${result}`);
+                        throw new Error(`Expected geometry type return value but got: ${toString(result)}`);
                     }
                     items.push(result);
                 }
@@ -439,42 +439,42 @@ export namespace Interpreter {
                 if (result !== undefined) {
                     return result;
                 }
-                throw new OperationNotSupported();
+                throw new OperationNotSupported(`${toString(a.eval())} + ${toString(b.eval())}`);
             },
             ArithmeticAddExp_minus(a, _, b) {
                 const result = arithmeticOperationExp(a, b, (a, b) => a - b);
                 if (result !== undefined) {
                     return result;
                 }
-                throw new OperationNotSupported();
+                throw new OperationNotSupported(`${toString(a.eval())} - ${toString(b.eval())}`);
             },
             ArithmeticMulExp_times(a, _, b) {
                 const result = arithmeticOperationExp(a, b, (a, b) => a * b);
                 if (result !== undefined) {
                     return result;
                 }
-                throw new OperationNotSupported();
+                throw new OperationNotSupported(`${toString(a.eval())} * ${toString(b.eval())}`);
             },
             ArithmeticMulExp_divide(a, _, b) {
                 const result = arithmeticOperationExp(a, b, (a, b) => a / b);
                 if (result !== undefined) {
                     return result;
                 }
-                throw new OperationNotSupported();
+                throw new OperationNotSupported(`${toString(a.eval())} / ${toString(b.eval())}`);
             },
             ArithmeticMulExp_mod(a, _, b) {
                 const result = arithmeticOperationExp(a, b, (a, b) => a % b);
                 if (result !== undefined) {
                     return result;
                 }
-                throw new OperationNotSupported();
+                throw new OperationNotSupported(`${toString(a.eval())} % ${toString(b.eval())}`);
             },
             ArithmeticExpExp_power(a, _, b) {
                 const result = arithmeticOperationExp(a, b, (a, b) => Math.pow(a, b));
                 if (result !== undefined) {
                     return result;
                 }
-                throw new OperationNotSupported();
+                throw new OperationNotSupported(`${toString(a.eval())} ^ ${toString(b.eval())}`);
             },
             ArithmeticPriExp_paren(_l, exp, _r) {
                 return exp.eval();
