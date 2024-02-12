@@ -44,3 +44,13 @@ test('should convert from multi point', () => {
     expect(result).toBeTruthy();
     expect(result.geometry.geometries.map((f: any) => f.coordinates)).toStrictEqual([[1, 1], [2, 2], [3, 3]]);
 });
+
+test('should rotate points', () => {
+    let result = defaultEval(`Rotate(MultiPoint(1 1, 2 2, 3 3), 23, Point(0 0))`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([
+        [1.3112079320509338, 0.5297935627181312],
+        [2.6222475634657485, 1.0597061640553413],
+        [3.9329505871284027, 1.589856903111244]
+    ]);
+});

@@ -278,7 +278,7 @@ export function toString(value: any) {
     }
 }
 
-export function pointsWalk(coords: any[], coordsMapFn: (g: any) => any): any {
+export function pointsWalk(coords: any[], coordsMapFn: (g: turf.Point) => any): any {
     if (!!coords) {
         if (Array.isArray(coords)) {
             if (coords.length > 0) {
@@ -297,7 +297,7 @@ export function pointsWalk(coords: any[], coordsMapFn: (g: any) => any): any {
     return coords
 }
 
-export function geoJsonWalk(geoJson: any, coordsMapFn: (g: any) => any): any {    
+export function geoJsonWalk(geoJson: any, coordsMapFn: (g: turf.Point) => any): any {    
     if (!!geoJson) {
 
         if (!!geoJson.features) {

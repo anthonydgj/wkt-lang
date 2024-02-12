@@ -410,7 +410,13 @@ PointGrid(20, 10, 2) # GEOMETRYCOLLECTION(POINT (0 0),POINT (0 2), ... POINT (38
 #### PointCircle
 `PointCircle(radius, count)` - create a circle of points with a given radius and point count.
 ```
-PointCircle(5, 50); # GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0.6266661678215213), ... )
+PointCircle(5, 50) # GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0.6266661678215213), ... )
+```
+
+#### Rotate
+`Rotate(geometry, angleDegrees, originPoint)` - rotate a geometry by the specified angle around an origin point.
+```
+Rotate(MultiPoint(1 1, 2 2, 3 3), 23, Point(0 0)) # MULTIPOINT (1.3112079320509338 0.5297935627181312, ... )
 ```
 
 #### ToX

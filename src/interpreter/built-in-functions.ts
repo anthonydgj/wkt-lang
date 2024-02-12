@@ -1,8 +1,9 @@
 import * as turf from '@turf/turf';
 
+import { geoJsonWalk, isGeometryType } from './helpers';
+
 import { GeometryType } from './types';
 import booleanEqual from "@turf/boolean-equal"
-import { isGeometryType } from './helpers';
 
 export namespace BuiltInFunctions {
 
@@ -94,5 +95,11 @@ export namespace BuiltInFunctions {
         const pointsList = getPointsList(value);
         return turf.geometryCollection(pointsList.map((p: any) => turf.point(p).geometry)).geometry;
     };
+
+    export const Rotate = (geometry: any, angle: number, origin: turf.Point) => {
+        return geoJsonWalk(geometry, (p: turf.Point) => {
+            return turf.transformRotate(p, angle, { pivot: origin });
+        });
+    }
 
 }
