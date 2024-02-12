@@ -278,13 +278,13 @@ export function toString(value: any) {
     }
 }
 
-export function pointsWalk(coords: any[], coordsMapFn: (g: turf.Point) => any): any {
+export function transformPoints(coords: any[], coordsMapFn: (g: turf.Point) => any): any {
     if (!!coords) {
         if (Array.isArray(coords)) {
             if (coords.length > 0) {
                 const firstElement = coords[0];
                 if (Array.isArray(firstElement)) {
-                    return coords.map((c: any) => pointsWalk(c, coordsMapFn));
+                    return coords.map((c: any) => transformPoints(c, coordsMapFn));
                 } else {
                     // coords is a point
                     const point = turf.point(coords).geometry;
@@ -297,20 +297,20 @@ export function pointsWalk(coords: any[], coordsMapFn: (g: turf.Point) => any): 
     return coords
 }
 
-export function geoJsonWalk(geoJson: any, coordsMapFn: (g: turf.Point) => any): any {    
+export function transform(geoJson: any, coordsMapFn: (g: turf.Point) => any): any {    
     if (!!geoJson) {
 
         if (!!geoJson.features) {
             return {
                 ...geoJson,
-                features: geoJson.features.map((feature: any) => geoJsonWalk(feature, coordsMapFn))
+                features: geoJson.features.map((feature: any) => transform(feature, coordsMapFn))
             };
         }
 
         if (!!geoJson.geometries) {
             return {
                 ...geoJson,
-                geometries: geoJson.geometries.map((geometry: any) => geoJsonWalk(geometry, coordsMapFn))
+                geometries: geoJson.geometries.map((geometry: any) => transform(geometry, coordsMapFn))
             }
         }
 
@@ -321,7 +321,7 @@ export function geoJsonWalk(geoJson: any, coordsMapFn: (g: turf.Point) => any): 
                     ...geoJson,
                     geometry: {
                         ...geometry,
-                        coordinates: pointsWalk(geometry.coordinates, coordsMapFn)
+                        coordinates: transformPoints(geometry.coordinates, coordsMapFn)
                     }
                 }
             }
@@ -331,7 +331,7 @@ export function geoJsonWalk(geoJson: any, coordsMapFn: (g: turf.Point) => any): 
         if (!!coordinates) {
             return {
                 ...geoJson,
-                coordinates: pointsWalk(coordinates, coordsMapFn)
+                coordinates: transformPoints(coordinates, coordsMapFn)
             }
         }
     }

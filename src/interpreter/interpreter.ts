@@ -3,7 +3,7 @@ import * as ohm from 'ohm-js';
 import * as turf from '@turf/turf'
 
 import { GeometryType, UNIT } from './types';
-import { OperationNotSupported, arithmeticOperation, arithmeticOperationExp, geoJsonWalk, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber, toString } from './helpers';
+import { OperationNotSupported, arithmeticOperation, arithmeticOperationExp, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber, toString, transform } from './helpers';
 import { Scope, ScopeBindings } from './scope';
 
 import { BuiltInFunctions } from './built-in-functions';
@@ -254,7 +254,7 @@ export namespace Interpreter {
                 }
 
                 if (operator === '|*') {
-                    return geoJsonWalk(val, fn);
+                    return transform(val, fn);
                 }
 
                 const list: any[] = getArrayLikeItems(val);
