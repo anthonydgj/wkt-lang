@@ -69,3 +69,42 @@ test('should error when attempting to generate non-geometries', () => {
         // Do nothing
     }
 });
+
+test('should map coordinates', () => {
+    let result = defaultEval(`Point(1 1) |* Function(p => p + 1)`);
+    expect(result?.geometry.coordinates).toStrictEqual([2, 2]);
+
+    result = defaultEval(`LineString(1 1, 2 2, 3 3) |* Function(p => p + 1)`);
+    expect(result?.geometry.coordinates).toStrictEqual([[2, 2], [3, 3], [4, 4]]);
+
+    result = defaultEval(`Polygon((1 1, 2 2, 3 3, 1 1), (4 4, 5 5, 6 6, 4 4)) |* Function(p => p + 1)`);
+    expect(result?.geometry.coordinates).toStrictEqual([[[2, 2], [3, 3], [4, 4], [2, 2]], [[5, 5], [6, 6], [7, 7], [5, 5]]]);
+
+    result = defaultEval(`GeometryCollection(
+        Point(1 1),
+        MultiPoint(1 1, 2 2),
+        LineString(1 1, 2 2, 3 3),
+        MultiLineString((1 1, 2 2, 3 3), (4 4, 5 5, 6 6)),
+        Polygon((1 1, 2 2, 3 3, 1 1), (7 7, 8 8, 9 9, 7 7)),
+        GeometryCollection(
+            Point(1 1),
+            MultiPoint(1 1, 2 2),
+            LineString(1 1, 2 2, 3 3),
+            MultiLineString((1 1, 2 2, 3 3), (4 4, 5 5, 6 6)),
+            Polygon((1 1, 2 2, 3 3, 1 1), (7 7, 8 8, 9 9, 7 7))
+        )        
+    ) |* Function(p => p + 3)`);
+    expect(result).toBeTruthy();
+    let geometries = result?.geometry.geometries;
+    expect(geometries[0].coordinates).toStrictEqual([4, 4]);
+    expect(geometries[1].coordinates).toStrictEqual([[4, 4], [5, 5]]);
+    expect(geometries[2].coordinates).toStrictEqual([[4, 4], [5, 5], [6, 6]]);
+    expect(geometries[3].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6]], [[7, 7], [8, 8], [9, 9]]]);
+    expect(geometries[4].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6], [4, 4]], [[10, 10], [11, 11], [12, 12], [10, 10]]]);
+    geometries = geometries[5].geometries;
+    expect(geometries[0].coordinates).toStrictEqual([4, 4]);
+    expect(geometries[1].coordinates).toStrictEqual([[4, 4], [5, 5]]);
+    expect(geometries[2].coordinates).toStrictEqual([[4, 4], [5, 5], [6, 6]]);
+    expect(geometries[3].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6]], [[7, 7], [8, 8], [9, 9]]]);
+    expect(geometries[4].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6], [4, 4]], [[10, 10], [11, 11], [12, 12], [10, 10]]]);
+});

@@ -98,9 +98,10 @@ WktLang {
         | assignmentOperator
         | notOperator
 
-    anyPipeOperator = doublePipeOperator | filterOperator | pipeOperator
-    
+    anyPipeOperator = doublePipeOperator | coordinatesPipeOperator | filterOperator | pipeOperator
+
     pipeOperator = "|"
+    coordinatesPipeOperator = "|*"
     doublePipeOperator = "||"
     filterOperator = "|>"
     concatOperator = "++"

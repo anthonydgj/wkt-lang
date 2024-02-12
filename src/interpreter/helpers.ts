@@ -277,3 +277,63 @@ export function toString(value: any) {
         return value;
     }
 }
+
+export function pointsWalk(coords: any[], coordsMapFn: (g: any) => any): any {
+    if (!!coords) {
+        if (Array.isArray(coords)) {
+            if (coords.length > 0) {
+                const firstElement = coords[0];
+                if (Array.isArray(firstElement)) {
+                    return coords.map((c: any) => pointsWalk(c, coordsMapFn));
+                } else {
+                    // coords is a point
+                    const point = turf.point(coords).geometry;
+                    return coordsMapFn(point).coordinates;
+                }
+                
+            }
+        }
+    }
+    return coords
+}
+
+export function geoJsonWalk(geoJson: any, coordsMapFn: (g: any) => any): any {    
+    if (!!geoJson) {
+
+        if (!!geoJson.features) {
+            return {
+                ...geoJson,
+                features: geoJson.features.map((feature: any) => geoJsonWalk(feature, coordsMapFn))
+            };
+        }
+
+        if (!!geoJson.geometries) {
+            return {
+                ...geoJson,
+                geometries: geoJson.geometries.map((geometry: any) => geoJsonWalk(geometry, coordsMapFn))
+            }
+        }
+
+        const geometry: any = geoJson.geometry;
+        if (!!geometry) {
+            if (geoJson.coordinates) {
+                return {
+                    ...geoJson,
+                    geometry: {
+                        ...geometry,
+                        coordinates: pointsWalk(geometry.coordinates, coordsMapFn)
+                    }
+                }
+            }
+        }
+
+        const coordinates = geoJson.coordinates;
+        if (!!coordinates) {
+            return {
+                ...geoJson,
+                coordinates: pointsWalk(coordinates, coordsMapFn)
+            }
+        }
+    }
+    return geoJson;
+}
