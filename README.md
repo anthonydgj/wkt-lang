@@ -419,6 +419,12 @@ PointCircle(5, 50) # GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0.
 Rotate(MultiPoint(1 1, 2 2, 3 3), 23, Point(0 0)) # MULTIPOINT (1.3112079320509338 0.5297935627181312, ... )
 ```
 
+#### Round
+`Round(num, precision)` - round a number with a given precision (defaults to 0).
+```
+Round(1.255, 1) # 1.3
+```
+
 #### ToX
 
 `ToLineString(g)`, `ToMultiPoint(g)`, `ToPolygon(g)`, `ToGeometryCollection(g)` - convert an array-like geometry of points to a different geometry type

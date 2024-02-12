@@ -54,3 +54,10 @@ test('should rotate points', () => {
         [3.9329505871284027, 1.589856903111244]
     ]);
 });
+
+test('should round number values', () => {
+    let result = defaultEval(`Round(1.255)`);
+    expect(result).toBe(1);
+    result = defaultEval(`Round(1.255, 1)`);
+    expect(result).toBe(1.3);
+});
