@@ -79,10 +79,12 @@ if (inputFiles && inputFiles.length > 0) {
 if (isInteractive) {
     const EXIT_CMD = `exit()`;
     const END_TOKEN = `;;`;
+    const highlightText = chalk.hex(`#1f91cf`);
+    const warningText = chalk.hex(`#bd3131`);
     let currentInput = ``;
     let count = 0;
     const prompt = () => {
-        const line = chalk.cyan(`-- [${count}] --`);
+        const line = highlightText(`--- [${count}] ---`);
         console.log(line);
         count++;
     }
@@ -116,7 +118,7 @@ prompt();
                     console.log(chalk.grey(result));
                     prompt();
                 } catch (err) {
-                    console.error(chalk.redBright(err));
+                    console.error(warningText(err));
                     prompt();
                 }
                 currentInput = '';
