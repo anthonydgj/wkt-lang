@@ -87,3 +87,13 @@ test('should return last value', () => {
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([1, 1]);
 });
+
+test('should support imports', () => {
+    let result = defaultEval(`@import("./src/tests/test.wktl")`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([1, 1]);
+
+    result = defaultEval(`a = @import("./src/tests/test.wktl"); a + Point(1 1)`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([2, 2]);
+});

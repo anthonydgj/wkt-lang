@@ -8,6 +8,7 @@ import { Scope, ScopeBindings } from './scope';
 
 import { BuiltInFunctions } from './built-in-functions';
 import { GRAMMAR } from './grammar';
+import { readFileSync } from 'fs';
 
 // Used for local development
 // const fs = require('fs');
@@ -42,6 +43,11 @@ export namespace Interpreter {
         const grammar = ohm.grammar(grammarString);
         const semantics = grammar.createSemantics();
         semantics.addOperation('eval', {
+            ImportExpression(_import, _lp, _lq, importUri, _rq, _rp) {
+                const uri = importUri.sourceString;
+                const file = readFileSync(uri, 'utf8');
+                return evaluateInput(file);
+            },
             IfThenElseExp(_if, c, _then, exp1, _else, exp2) {
                 const condition = c.eval();
                 if (condition) {

@@ -105,5 +105,4 @@ export namespace BuiltInFunctions {
     export const Round = (val: number, precision = 0) => {
         return +val.toFixed(precision);
     }
-
 }

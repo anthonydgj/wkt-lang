@@ -25,12 +25,18 @@ WktLang {
         | comment    
     ExpressionDelimiter = expressionDelimiter
     expressionDelimiter = ";"
+    
+    // Imports
+    ImportExpression = "@import" LeftParen doubleQuote importUri doubleQuote RightParen
+    importUri = importUriCharacter*
+    importUriCharacter = alnum | "/" | ":" | "."
 
     // Variables
     Declaration = Identifier assignmentOperator AssignableExpression 
     AssignableExpression = 
     	| NonArithmeticAssignableExpression
     	| ArithmeticAssignableExpression
+        | ImportExpression
     NonArithmeticAssignableExpression = 
     	| OperationExp
     ArithmeticAssignableExpression = Arithmetic<AssignableExpressionForArithmetic>
