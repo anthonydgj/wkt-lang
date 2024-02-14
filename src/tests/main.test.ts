@@ -96,4 +96,13 @@ test('should support imports', () => {
     result = defaultEval(`a = @import("./src/tests/test.wktl"); a + Point(1 1)`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 2]);
+
+    result = defaultEval(`a = @import("./src/tests/test.json"); a + Point(1 1)`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([2, 2]);
+
+    result = defaultEval(`a = @import("./src/tests/test.geojson"); a + Point(1 1)`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([2, 2]);
+
 });

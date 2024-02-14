@@ -218,3 +218,20 @@ export function transform(geoJson: any, coordsMapFn: (g: turf.Point) => any): an
     }
     return geoJson;
 }
+
+export function convertToGeometry(json: any): any {
+    if (json.type === 'Feature') {
+        return json.geometry;
+    } else if (json.type === 'FeatureCollection') {
+        return {
+            type: 'GeometryCollection',
+            geometries: json.features.map((f: any) => convertToGeometry(f))
+        }
+    } else if (Array.isArray(json)) {
+        return {
+            type: 'GeometryCollection',
+            geometries: json.map((f: any) => convertToGeometry(f))
+        }
+    }
+    return json;
+}

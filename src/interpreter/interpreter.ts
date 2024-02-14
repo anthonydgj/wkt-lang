@@ -3,7 +3,7 @@ import * as ohm from 'ohm-js';
 import * as turf from '@turf/turf'
 
 import { GeometryType, UNIT } from './types';
-import { OperationNotSupported, arithmeticOperation, arithmeticOperationExp, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber, toString, transform } from './helpers';
+import { OperationNotSupported, arithmeticOperation, arithmeticOperationExp, convertToGeometry, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber, toString, transform } from './helpers';
 import { Scope, ScopeBindings } from './scope';
 
 import { BuiltInFunctions } from './built-in-functions';
@@ -46,6 +46,9 @@ export namespace Interpreter {
             ImportExpression(_import, _lp, _lq, importUri, _rq, _rp) {
                 const uri = importUri.sourceString;
                 const file = readFileSync(uri, 'utf8');
+                if (uri.endsWith('json')) {
+                    return convertToGeometry(JSON.parse(file));
+                }
                 return evaluateInput(file);
             },
             IfThenElseExp(_if, c, _then, exp1, _else, exp2) {
