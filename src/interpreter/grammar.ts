@@ -149,13 +149,13 @@ WktLang {
     notOperator = "!"
 
     // Identifiers
-    Identifier =  basicIdentifier | specialIdentifier
+    Identifier =  basicIdentifier
     basicIdentifier =  ~nonAllowedIdentifiers id
-    id = simpleLatinLetter idCharacter*
-    idCharacter = simpleLatinLetter | digit | "_"
+    id = firstIdCharacter idCharacter*
+    firstIdCharacter = simpleLatinLetter | "$"
+    idCharacter = simpleLatinLetter | digit | "_" | "?" | "'"
 	nonAllowedIdentifiers = keyword identifierEnd
     identifierEnd = end | comma | leftParen | rightParen | operator | wktSpace
-	specialIdentifier = "$?"
 
     /*************************************
      * OGC Well-Known Text (WKT) Grammar *

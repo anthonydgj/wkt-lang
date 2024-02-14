@@ -364,10 +364,6 @@ export namespace Interpreter {
             FunctionTextExp(_keyword, _leftParen, exp, _rightParen) {
                 return exp.eval();
             },
-            specialIdentifier(id) {
-                const key = id.sourceString;
-                return currentScope.resolve(key);
-            },
             id(first, rest) {
                 const key = first.sourceString + rest.sourceString;
                 return currentScope.resolve(key);
