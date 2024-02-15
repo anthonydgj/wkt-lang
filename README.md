@@ -391,6 +391,15 @@ Array-like geometries can be filtered using the filter (`|>`) operator:
 LineString(1 1, 2 2, 3 3) |> Function((x, i) => x:x() <= 2) # LINESTRING (1 1, 2 2)
 ```
 
+### Importing
+Data can be imported using `@import` expressions. For example, if the file `etna.wktl` contains `Point(14.99 37.75)`, it can be imported using:
+```
+data = @import('etna.wktl');
+data # POINT (14.99 37.75)
+```
+
+Supported data formats include WKT, GeoJSON, and `wkt-lang`.
+
 ### Built-In Functions
 
 Several built-in functions are provided to support geometry generation and transformation. Additionally, all JavaScript `Math` [static properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math#static_properties) and [static functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math#static_methods) are available in top-level variables.
