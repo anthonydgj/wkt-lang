@@ -3,7 +3,18 @@ import * as ohm from 'ohm-js';
 import * as turf from '@turf/turf'
 
 import { GeometryType, UNIT } from './types';
-import { OperationNotSupported, arithmeticOperation, arithmeticOperationExp, convertToGeometry, getArrayLikeItems, getGeometryType, isAnyGeometryType, isGeometryType, isNumber, toString, transform } from './helpers';
+import {
+    OperationNotSupported,
+    arithmeticOperationExp,
+    convertToGeometry,
+    getArrayLikeItems,
+    getGeometryType,
+    isAnyGeometryType,
+    isGeometryType,
+    isNumber,
+    toString,
+    transform
+} from './helpers';
 import { Scope, ScopeBindings } from './scope';
 
 import { BuiltInFunctions } from './built-in-functions';
