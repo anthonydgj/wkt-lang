@@ -27,16 +27,14 @@ WktLang {
     expressionDelimiter = ";"
     
     // Imports
-    ImportExpression = "@import" LeftParen doubleQuote importUri doubleQuote RightParen
-    importUri = importUriCharacter*
-    importUriCharacter = alnum | "/" | ":" | "."
+    ImportExpression = "@import" LeftParen stringLiteralExp RightParen
 
     // Variables
     Declaration = Identifier assignmentOperator AssignableExpression 
     AssignableExpression = 
+        | ImportExpression
     	| NonArithmeticAssignableExpression
     	| ArithmeticAssignableExpression
-        | ImportExpression
     NonArithmeticAssignableExpression = 
     	| OperationExp
     ArithmeticAssignableExpression = Arithmetic<AssignableExpressionForArithmetic>
@@ -262,6 +260,11 @@ WktLang {
 	// Boolean value
     BooleanValue = ComputedValue<booleanValue>
     booleanValue = caseInsensitive<"true"> | caseInsensitive<"false">
+
+    // String literals
+    stringLiteralExp =  stringLiteral<"'"> | stringLiteral<"\""> 
+    stringLiteral<quoteChar> = quoteChar stringLiteralValue<quoteChar>* quoteChar
+    stringLiteralValue<quoteChar> = ~quoteChar any    
 
     // OGC specification primitives
     quotedName = doubleQuote name doubleQuote

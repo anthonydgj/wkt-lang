@@ -54,8 +54,11 @@ export namespace Interpreter {
         const grammar = ohm.grammar(grammarString);
         const semantics = grammar.createSemantics();
         semantics.addOperation('eval', {
-            ImportExpression(_import, _lp, _lq, importUri, _rq, _rp) {
-                const uri = importUri.sourceString;
+            stringLiteral(_leftQuote, str, _rightQuote) {
+                return str.sourceString;
+            },
+            ImportExpression(_keyword, _lp, importUri, _rp) {
+                const uri = importUri.eval();
                 const file = readFileSync(uri, 'utf8');
                 if (uri.endsWith('json')) {
                     return convertToGeometry(JSON.parse(file));
