@@ -105,4 +105,11 @@ test('should support imports', () => {
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 2]);
 
+    try {
+        defaultEval(`a = @import("./src/tests/test-invalid.wktl"); a + Point(1 1)`);
+        fail(`Expected an error.`);
+    } catch(err) {
+        // pass
+    }
+
 });

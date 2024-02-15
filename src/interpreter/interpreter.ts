@@ -60,10 +60,13 @@ export namespace Interpreter {
             ImportExpression(_keyword, _lp, importUri, _rp) {
                 const uri = importUri.eval();
                 const file = readFileSync(uri, 'utf8');
-                if (uri.endsWith('json')) {
+                try {
                     return convertToGeometry(JSON.parse(file));
-                }
-                return evaluateInput(file);
+                } catch { }
+                try {
+                    return evaluateInput(file);
+                } catch { }
+                throw new Error(`Unable to import file: ${uri}`);
             },
             IfThenElseExp(_if, c, _then, exp1, _else, exp2) {
                 const condition = c.eval();
