@@ -7,5 +7,6 @@
 # Build files
 /dist
 /lib
+/local
 
 .DS_Store
