@@ -34,6 +34,12 @@ const args = yargs.command('$0', `${packageJson.description}\nVersion: ${version
         string: true,
         description: 'Evaluate the specified script text'
     })
+    .option('bind-import', {
+        alias: 'b',
+        type: 'array',
+        string: true,
+        description: 'Bind imported data to a variable'
+    })
     .version(version)
     .parseSync();
 
@@ -51,14 +57,44 @@ const options: Options = {
 const evaluateScript = args.evaluate;
 const inputFiles = args._;
 const isInteractive = args.interactive;
-let result;
+const bindImports = args.bindImport;
+const highlightText = chalk.hex(`#1f91cf`);
+const errorText = chalk.hex(`#bd3131`);
+let result: any;
 let hasEvaluated = false;
 
+const errorExit = (message: string) => {
+    console.log(errorText(message));
+    process.exit(-1);
+}
+
+// Evaluate import bindings
+if (bindImports) {
+    for (const bindImport of bindImports) {
+        const [identifier, uri] = bindImport.split('=');
+        if (identifier && uri) {
+            try {
+                evaluate(`${identifier} = import('${uri.trim()}')`, options);
+            } catch (err: any) {
+                errorExit(`Unable to evaluate import binding "${bindImport}" \n\t${err.message}`);
+            }
+        } else {
+            errorExit(`Unable to evaluate import binding "${bindImport}"`);
+        }
+    }
+}
+
+// Evaluate initial script
 if (evaluateScript) {
-    result = evaluate(evaluateScript, options);
+    try {
+        result = evaluate(evaluateScript, options);
+    } catch (err: any) {
+        errorExit(`Unable to evaluate script: \n\t${err}`);
+    }
     hasEvaluated = true;
 }
 
+// Evaluate files
 if (inputFiles && inputFiles.length > 0) {
     inputFiles.forEach(inputFile => {
         const input = fs.readFileSync(inputFile, 'utf-8');
@@ -79,8 +115,6 @@ if (inputFiles && inputFiles.length > 0) {
 if (isInteractive) {
     const EXIT_CMD = `exit()`;
     const END_TOKEN = `;;`;
-    const highlightText = chalk.hex(`#1f91cf`);
-    const warningText = chalk.hex(`#bd3131`);
     let currentInput = ``;
     let count = 0;
     const prompt = () => {
@@ -118,7 +152,7 @@ prompt();
                     console.log(chalk.grey(result));
                     prompt();
                 } catch (err) {
-                    console.error(warningText(err));
+                    console.error(errorText(err));
                     prompt();
                 }
                 currentInput = '';
