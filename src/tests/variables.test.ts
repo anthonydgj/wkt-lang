@@ -1,5 +1,7 @@
+import { DEFAULT_OPTIONS, defaultEval } from "./test-utils";
+
 import { Interpreter } from "../interpreter/interpreter";
-import { defaultEval } from "./test-utils";
+import { WktLang } from "../main";
 
 test('should declare variables', () => {
     let result = defaultEval(`a = Point(1 2)`);
@@ -50,9 +52,19 @@ test('should reassign variables', () => {
 // Last expression result variable
 
 test('should return last evaluated value using $?', () => {
+
+    // Provide custom scope
     const scope = Interpreter.createGlobalScope();
     defaultEval(`Point(2 3)`, { scope });
     let result = defaultEval(`$?`, { scope });
     expect(result).toBeTruthy();
-    expect(result.coordinates).toStrictEqual([2, 3]);
+    expect(result.geometry.coordinates).toStrictEqual([2, 3]);
+
+    // Use Interpreter object
+    const wktl = new WktLang(DEFAULT_OPTIONS);
+    wktl.evaluate(`Point(2 3)`);
+    result = wktl.evaluate(`$?`);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([2, 3]);
+
 });

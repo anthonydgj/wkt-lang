@@ -1,7 +1,8 @@
-import { Options, OutputFormat, evaluate } from '../main';
+import { Options, OutputFormat, WktLang } from '../main';
 
-export const options: Options = {
+export const DEFAULT_OPTIONS: Options = {
     outputFormat: OutputFormat.GeoJSON
 };
 
-export const defaultEval = (input: string, opts = options) => evaluate(input, opts);
+export const defaultEval = (input: string, opts = DEFAULT_OPTIONS) => 
+    new WktLang().evaluate(input, {...DEFAULT_OPTIONS, ...opts});

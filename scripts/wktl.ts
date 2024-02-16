@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-import { Options, OutputFormat, evaluate } from "../src/main";
+import { Options, OutputFormat, WktLang } from "../src/main";
 
 import { Interpreter } from '../src/interpreter/interpreter';
 import chalk from 'chalk';
@@ -50,8 +50,7 @@ const getJsonString = (json: any) => {
 const outputFormat = args.geojson ? OutputFormat.GeoJSON : 
     args.format ? args.format : OutputFormat.WKT;
 const options: Options = {
-    outputFormat: outputFormat,
-    scope: Interpreter.createGlobalScope()  // shared scope across evaluations
+    outputFormat: outputFormat
 };
 
 const evaluateScript = args.evaluate;
@@ -60,6 +59,7 @@ const isInteractive = args.interactive;
 const bindImports = args.bindImport;
 const highlightText = chalk.hex(`#1f91cf`);
 const errorText = chalk.hex(`#bd3131`);
+const wktl = new WktLang(options);
 let result: any;
 let hasEvaluated = false;
 
@@ -74,7 +74,7 @@ if (bindImports) {
         const [identifier, uri] = bindImport.split('=');
         if (identifier && uri) {
             try {
-                evaluate(`${identifier} = import('${uri.trim()}')`, options);
+                wktl.evaluate(`${identifier} = import('${uri.trim()}')`);
             } catch (err: any) {
                 errorExit(`Unable to evaluate import binding "${bindImport}" \n\t${err.message}`);
             }
@@ -87,7 +87,7 @@ if (bindImports) {
 // Evaluate initial script
 if (evaluateScript) {
     try {
-        result = evaluate(evaluateScript, options);
+        result = wktl.evaluate(evaluateScript);
     } catch (err: any) {
         errorExit(`Unable to evaluate script: \n\t${err}`);
     }
@@ -99,7 +99,7 @@ if (inputFiles && inputFiles.length > 0) {
     inputFiles.forEach(inputFile => {
         const input = fs.readFileSync(inputFile, 'utf-8');
 
-        result = evaluate(input, options);
+        result = wktl.evaluate(input);
         if (options.outputFormat === OutputFormat.GeoJSON) {
             try {
                 result = getJsonString(result);
@@ -147,7 +147,7 @@ prompt();
             const inputEndIndex = currentInput.indexOf(END_TOKEN);
             if (inputEndIndex >= 0) {
                 try {
-                    let result = evaluate(currentInput.substring(0, inputEndIndex), options);
+                    let result = wktl.evaluate(currentInput.substring(0, inputEndIndex), options);
                     result = options.outputFormat === OutputFormat.GeoJSON ? getJsonString(result) : result;
                     console.log(chalk.grey(result));
                     prompt();

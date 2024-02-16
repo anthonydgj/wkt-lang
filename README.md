@@ -16,9 +16,10 @@ npm install wkt-lang
 
 Evaluate code using the `evaluate()` function:
 ```
-import { evaluate } from 'wkt-lang';
+import { WktLang } from 'wkt-lang';
 
-const result = evaluate(`Point(1 1) + Point(2 2)`);
+const wktl = new WktLang();
+const result = wktl.evaluate(`Point(1 1) + Point(2 2)`);
 ```
 
 See the [Terminal Usage](#terminal-usage) section for instructions using the CLI program.

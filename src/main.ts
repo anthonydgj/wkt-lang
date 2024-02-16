@@ -15,24 +15,40 @@ export interface Options {
 }
 
 export const DEFAULT_OPTIONS: Options = {
-    outputFormat: OutputFormat.WKT
+    outputFormat: OutputFormat.WKT,
+    scope: Interpreter.createGlobalScope()
 }
 
-export function evaluate(input: string, options: Options = DEFAULT_OPTIONS) {
-    const result = Interpreter.evaluateInput(input, options?.scope);
-    if (result === null) {
-        return undefined;
+export class WktLang {
+    private options: Options;
+    constructor(
+        initialOptions?: Options
+    ) {
+        this.options = {
+            ...DEFAULT_OPTIONS,
+            ...initialOptions
+        };
     }
-    if (typeof result === 'object') {
-        switch(options?.outputFormat) {
-            case OutputFormat.WKT:
-                return wellknown.stringify(result);
-            case OutputFormat.GeoJSON:
-                return turf.feature(result) as any;
-            default:
-                break;
+
+    evaluate(input: string, overrideOptions?: Partial<Options>) {
+        const options = {
+            ...this.options,
+            ...overrideOptions
+        };
+        const result = Interpreter.evaluateInput(input, options.scope);
+        if (result === null) {
+            return undefined;
         }
+        if (typeof result === 'object') {
+            switch(options?.outputFormat) {
+                case OutputFormat.WKT:
+                    return wellknown.stringify(result);
+                case OutputFormat.GeoJSON:
+                    return turf.feature(result) as any;
+                default:
+                    break;
+            }
+        }
+        return result;
     }
-    return result;
 }
-

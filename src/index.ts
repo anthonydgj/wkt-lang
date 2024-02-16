@@ -1,4 +1,4 @@
-export { Options, OutputFormat, evaluate, DEFAULT_OPTIONS } from './main';
+export { Options, OutputFormat, WktLang, DEFAULT_OPTIONS } from './main';
 export { BuiltInFunctions } from './interpreter/built-in-functions';
 export { Interpreter } from './interpreter/interpreter';
 export { Scope, ScopeBindings } from './interpreter/scope';
