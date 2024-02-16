@@ -89,24 +89,24 @@ test('should return last value', () => {
 });
 
 test('should support imports', () => {
-    let result = defaultEval(`@import("./src/tests/test.wktl")`);
+    let result = defaultEval(`Import("./src/tests/test.wktl")`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([1, 1]);
 
-    result = defaultEval(`a = @import("./src/tests/test.wktl"); a + Point(1 1)`);
+    result = defaultEval(`a = Import("./src/tests/test.wktl"); a + Point(1 1)`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 2]);
 
-    result = defaultEval(`a = @import("./src/tests/test.json"); a + Point(1 1)`);
+    result = defaultEval(`a = Import("./src/tests/test.json"); a + Point(1 1)`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 2]);
 
-    result = defaultEval(`a = @import("./src/tests/test.geojson"); a + Point(1 1)`);
+    result = defaultEval(`a = Import("./src/tests/test.geojson"); a + Point(1 1)`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 2]);
 
     try {
-        defaultEval(`a = @import("./src/tests/test-invalid.wktl"); a + Point(1 1)`);
+        defaultEval(`a = Import("./src/tests/test-invalid.wktl"); a + Point(1 1)`);
         fail(`Expected an error.`);
     } catch(err) {
         // pass

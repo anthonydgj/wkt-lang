@@ -27,7 +27,8 @@ WktLang {
     expressionDelimiter = ";"
     
     // Imports
-    ImportExpression = "@import" LeftParen stringLiteralExp RightParen
+    ImportExpression = importKeyword LeftParen stringLiteralExp RightParen
+    importKeyword = caseInsensitive<"import">
 
     // Variables
     Declaration = Identifier assignmentOperator AssignableExpression 
@@ -237,6 +238,7 @@ WktLang {
         | ifKeyword
         | thenKeyword
         | elseKeyword
+        | importKeyword
     geometryKeyword = pointKeyword
         | multiPointKeyword
     	| lineStringKeyword

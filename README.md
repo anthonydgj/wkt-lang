@@ -392,9 +392,9 @@ LineString(1 1, 2 2, 3 3) |> Function((x, i) => x:x() <= 2) # LINESTRING (1 1, 2
 ```
 
 ### Importing
-Data can be imported using `@import` expressions. For example, if the file `etna.wktl` contains `Point(14.99 37.75)`, it can be imported using:
+Data can be imported using `Import` expressions. For example, if the file `etna.wktl` contains `Point(14.99 37.75)`, it can be imported using:
 ```
-data = @import('etna.wktl');
+data = Import('etna.wktl');
 data # POINT (14.99 37.75)
 ```
 
