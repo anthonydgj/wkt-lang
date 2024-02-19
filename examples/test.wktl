@@ -149,7 +149,7 @@ Generate 5 Function(i => {
 })
     | Flatten
     || Function(a => {
-        If a:x() < 0 Then
+        If (a:x() < 0) Then
             (a + Point(0 10))
         Else
             (a - Point(0 10))

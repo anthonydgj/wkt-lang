@@ -41,18 +41,21 @@ WktLang {
     ArithmeticAssignableExpression = Arithmetic<AssignableExpressionForArithmetic>
     AssignableExpressionForArithmetic = 
         | BooleanResultExp
-        | AccessorExp
-    	| NumberExp
-    	| GeometryExp
-        | FunctionTextExp 
-        | BooleanValue
         | IfThenElseExp
+    	| NumberExp
+        | AccessibleExp<GeometryExp>
+        | FunctionTextExp
+        | BooleanValue
         | ComputedExp
-        | Paren<OperationExp> //Paren<OperationExp>
+        | Paren<OperationExp> 
     assignmentOperator = "="
     ComputedValue<Type> = Type | ComputedExp
-    ComputedExp = ComputedPrimitive
+    ComputedExp = AccessibleExp<ComputedPrimitive>
     ComputedPrimitive = FunctionCallExp | Identifier
+
+    AccessibleExp<Type> = 
+    	| Type accessorOperator Identifier Invocation --method
+    	| Type
 
     // Additional operation expressions
     OperationExp =  PipeExp | GenerateExp | ConcatExp
@@ -74,8 +77,6 @@ WktLang {
     ParenthesizedArithmetic<Type> = "(" Arithmetic<Type> ")"
     Arithmetic<Type> = ArithmeticAddExp<Type>
     	| Type
-    //ArithmeticConcatExp<Type> = ArithmeticConcatExp<Type> concatOperator ArithmeticAddExp<Type> --concat
-    //	| ArithmeticAddExp<Type>
     ArithmeticAddExp<Type> = ArithmeticAddExp<Type> plusOperator ArithmeticMulExp<Type>  -- plus
       | ArithmeticAddExp<Type> minusOperator ArithmeticMulExp<Type>  -- minus
       | ArithmeticMulExp<Type>
@@ -127,13 +128,13 @@ WktLang {
     FunctionCallExp = Callable Invocation
     Invocation = LeftParen ListOf<GeneralExpression, Comma> RightParen
    	functionKeyword = caseInsensitive<"Function">
-    Callable = FunctionTextExp | Identifier
-    
-    // Accessor expressions
-    AccessorExp = ComputedValue<GeometryExp> accessorOperator Identifier Invocation
+    Callable = 
+    	| AccessibleExp<Callable>
+    	| FunctionTextExp
+        | Identifier
     
     // If-Then-Else expressions
-    IfThenElseExp = ifKeyword OptionallyParen<BooleanResultExp> thenKeyword
+    IfThenElseExp = ifKeyword Paren<BooleanResultExp> thenKeyword
     	Paren<ScopedExpressions> elseKeyword 
         Paren<ScopedExpressions>
     ifKeyword = caseInsensitive<"if">
@@ -146,7 +147,7 @@ WktLang {
     NotExp = notOperator ComparePrimitive
     ConditionalValue = CompareExp | EqualityExp | BooleanValue | NumberExp
     CompareExp = ComparePrimitive compareOperatorPrimitive ComparePrimitive
-    ComparePrimitive = BooleanResultExp | AccessorExp | ComputedValue<NumberExp> | geometryKeyword
+    ComparePrimitive = BooleanResultExp | ComputedValue<NumberExp> | AccessibleExp<GeometryExp> | geometryKeyword
     conditionalOperator = compareOperatorPrimitive | equalityOperatorPrimitive
     compareOperatorPrimitive = "<=" | ">=" | "<" | ">"
     equalityOperatorPrimitive = "==" | "!=" | logicalOperator

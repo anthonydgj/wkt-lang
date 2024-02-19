@@ -87,7 +87,7 @@ it('should handle recursion', () => {
     let result = defaultEval(`
         build_list = Function(n => {
             # Base case
-            if n == 0 then (
+            if (n == 0) then (
                 GeometryCollection()
             ) else (
                 # Recursive call to build the rest of the list

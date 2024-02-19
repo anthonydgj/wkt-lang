@@ -46,31 +46,31 @@ test('should support conditionals', () => {
 
 test('should support If-Then-Else expressions', () => {
     let result;
-    result = defaultEval(`If 3 > 4 Then (Point(1 1)) Else (Point(2 2))`);
+    result = defaultEval(`If (3 > 4) Then (Point(1 1)) Else (Point(2 2))`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([2, 2]);
 
-    result = defaultEval(`If 3 < 4 Then (Point(1 1)) Else (Point(2 2))`);
+    result = defaultEval(`If (3 < 4) Then (Point(1 1)) Else (Point(2 2))`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([1, 1]);
 
-    result = defaultEval(`Function(x => If 3 < 4 Then (Point(1 1)) Else ( Point(2 2)))()`);
+    result = defaultEval(`Function(x => If (3 < 4) Then (Point(1 1)) Else ( Point(2 2)))()`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([1, 1]);
 
-    result = defaultEval(`If 3 < 4 Then (Point(1 1)) Else (Point(2 2))`);
+    result = defaultEval(`If (3 < 4) Then (Point(1 1)) Else (Point(2 2))`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([1, 1]);
 
     result = defaultEval(`
-        If 3 < 4 Then
+        If (3 < 4) Then
             (Generate 3 Function(x => Point(x x)))
         Else (Point(2 2))`);
     expect(result).toBeTruthy();
     expect(result.geometry.geometries.map((f: any) => f.coordinates)).toStrictEqual([[0, 0], [1, 1], [2, 2]]);
 
     result = defaultEval(`
-        If 3 < 4 Then (
+        If (3 < 4) Then (
             Generate 3 Function(x => Point(x x))
                 || Function(p => p + 1)
         )
@@ -79,7 +79,7 @@ test('should support If-Then-Else expressions', () => {
     expect(result.geometry.geometries.map((f: any) => f.coordinates)).toStrictEqual([[1, 1], [2, 2], [3, 3]]);
 
     result = defaultEval(`
-        a = If 3 < 4 Then (
+        a = If (3 < 4) Then (
             Generate 3 Function(x => Point(x x))
                 || Function(p => p + 1)
         ) Else (Point(2 2));

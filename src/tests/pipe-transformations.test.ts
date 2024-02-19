@@ -108,3 +108,28 @@ test('should map coordinates', () => {
     expect(geometries[3].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6]], [[7, 7], [8, 8], [9, 9]]]);
     expect(geometries[4].coordinates).toStrictEqual([[[4, 4], [5, 5], [6, 6], [4, 4]], [[10, 10], [11, 11], [12, 12], [10, 10]]]);
 });
+
+test('should bind parameters to functions', () => {
+    let result = defaultEval(`
+        PipeRound = Function((precision, value) => Round(value, precision));
+        2.345325 | PipeRound:bind(2)
+    `);
+    expect(result).toBe(2.35);
+
+    result = defaultEval(`
+        TripleAdd = Function((g1, g2, g3) => g1 + g2 + g3);
+        4 | TripleAdd:bind(2):bind(3)
+    `);
+    expect(result).toBe(9);
+
+    result = defaultEval(`
+        myFn = Function((x, y, last) => {
+            first = Point(x y);
+            LineString(first, last)
+        });
+        myFnPartial = myFn:bind(1, 2);
+        myFnPartial(Point(3 4))
+    `);
+    expect(result).toBeTruthy();
+    expect(result.geometry.coordinates).toStrictEqual([[1, 2],[3, 4]])
+});

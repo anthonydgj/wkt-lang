@@ -273,11 +273,19 @@ l:numPoints(); # 2
 l:pointN(1); # POINT (3 4)
 ```
 
-Properties can be set by calling a method with an appropriate parameter:
+Geometry properties can be set by calling a method with an appropriate parameter:
 ```
 p = Point(3 4);
 p:x(5); # POINT (5 4)
 p:y(6); # POINT (3 6)
+```
+
+Functions can have parameters bound using the `bind()` method:
+```
+RoundPoint = Function((precision, p) => Point(round(p:x()) round(p:y())));
+Generate 10 Function(i => { x = random() * 100; Point(x x) })
+    || RoundPoint:bind(2)
+# GEOMETRYCOLLECTION (POINT (18.98 18.98), POINT (14.26 14.26), ...)
 ```
 
 ### Conditional Expressions
@@ -300,7 +308,7 @@ a:x() < b:x() # true
 
 Control flow can be dictated using `If-Then-Else` expressions:
 ```
-result = If Point(1 2):x() < 3
+result = If (Point(1 2):x() < 3)
          Then (LineString(1 1, 2 2, 3 3))
          Else (Point(0 0));
 result # LINESTRING(1 1, 2 2, 3 3)
@@ -340,6 +348,12 @@ myFn = Function((x, y, last) => {
 });
 
 myFn(1, 2, Point(3 4)) # LINESTRING (1 2, 3 4)
+```
+
+Parameter values can be bound by calling `bind()` on a function:
+```
+myFnPartial = myFn:bind(1, 2);
+myFnPartial(Point(3 4)) # LINESTRING (1 2, 3 4)
 ```
 
 ### Generate Expressions

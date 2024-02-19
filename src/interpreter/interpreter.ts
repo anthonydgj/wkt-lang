@@ -7,6 +7,7 @@ import {
     OperationNotSupported,
     arithmeticOperationExp,
     convertToGeometry,
+    geometryAccessor,
     getArrayLikeItems,
     getGeometryType,
     isAnyGeometryType,
@@ -128,78 +129,6 @@ export namespace Interpreter {
                         return value1 >= value2;
                 }
                 throw new Error(`Operator not supported: ${operator}`);
-            },
-            AccessorExp(v, _, p, i) {
-                const value = v.eval();
-                const property = p.sourceString;
-                const params = i.eval();
-
-                if (!isAnyGeometryType(value)) {
-                    throw new Error(`Expected a geometry type for value "${v.sourceString}" but got: ${toString(value)}`);
-                }
-
-                switch (property.toLocaleLowerCase()) {
-                    case 'type':
-                        if (params?.length > 1) {
-                            throw new Error(`Expected no parameters for "${property}" for ${v.sourceString}`)
-                        }
-                        return getGeometryType(value, true);
-                }
-
-                if (isGeometryType(GeometryType.Point, value)) {
-                    switch (property.toLocaleLowerCase()) {
-                        case 'x':
-                            if (params?.length > 0) {
-                                // setter
-                                if (params.length === 1) {
-                                    return turf.point([
-                                        params[0],
-                                        value.coordinates[1]
-                                    ]).geometry;
-                                }
-                                throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
-                            }
-                            // getter
-                            return value.coordinates[0];
-                        case 'y':
-                            if (params?.length > 0) {
-                                // setter
-                                if (params.length === 1) {
-                                    return turf.point([
-                                        value.coordinates[0],
-                                        params[0]
-                                    ]).geometry;
-                                }
-                                throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
-                            }
-                            // getter
-                            return value.coordinates[1];
-                    }
-                } else if (isGeometryType(GeometryType.GeometryCollection, value)) {
-                    switch (property.toLocaleLowerCase()) {
-                        case 'geometryn':
-                            if (params.length === 1) {
-                                const index = parseInt(params[0]);
-                                return value.geometries[index];
-                            }
-                            throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
-                        case 'numgeometries':
-                            return value.geometries.length;
-                        }
-                } else if (isGeometryType(GeometryType.LineString, value)) {
-                    switch (property.toLocaleLowerCase()) {
-                        case 'pointn':
-                            if (params.length === 1) {
-                                const index = parseInt(params[0]);
-                                return turf.point(value.coordinates[index]).geometry;
-                            }
-                            throw Error(`Expected one value in "${property}" setter for "${v.sourceString}" but got: ${toString(params)}`)
-                        case 'numpoints':
-                            return value.coordinates.length;
-                        }
-                }
-
-                throw new Error(`Property "${property}" not accessible on object: ${toString(value)}`);
             },
             ConcatExp(g1, _op, g2) {
                 const geom1 = g1.eval();
@@ -359,6 +288,19 @@ export namespace Interpreter {
                     throw new Error(`${callable.sourceString} is: ${fn}`);
                 }
                 const value = fn(...params);
+                return value;
+            },
+            AccessibleExp_method(val, _accessOp, prop, p) {
+                const value = val.eval();
+                const params = p.eval();
+                const identifier = prop.sourceString;
+                if (typeof value === 'function') {
+                    if (identifier === 'bind') {
+                        return value.bind(undefined, ...params)
+                    }
+                } else if (isAnyGeometryType(value)) {
+                    return geometryAccessor(val, prop, p);
+                }
                 return value;
             },
             Invocation(_leftParen, list, _rightParen) {
