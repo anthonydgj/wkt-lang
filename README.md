@@ -282,9 +282,9 @@ p:y(6); # POINT (3 6)
 
 Functions can have parameters bound using the `bind()` method:
 ```
-RoundPoint = Function((precision, p) => Point(round(p:x()) round(p:y())));
-Generate 10 Function(i => { x = random() * 100; Point(x x) })
-    || RoundPoint:bind(2)
+Generate 10 Function(i => { x = random() * 100; Point(x x) }) # Create random points
+    || Round:bind(2)   # Round coordinates to 2 decimal places
+
 # GEOMETRYCOLLECTION (POINT (18.98 18.98), POINT (14.26 14.26), ...)
 ```
 
@@ -365,10 +365,8 @@ LineString(1 1, 2 2, 3 3) || Function((x, i) => x * i) # LINESTRING (0 0, 2 2, 6
 
 Each point in a geometry can be transformed using the pipe-all (`|*`) operator:
 ```
-LineString(1.4325 1.5325, 2.23525 2.7453, 3.26474 3.34643)
-    |* Function(p => Point(round(p:x()) round(p:y())))
-
-# LINESTRING (1 2, 2 3, 3 3)
+LineString(1.4325 1.5325, 2.23525 2.7453, 3.26474 3.34643) |* Round:bind(1)
+# LINESTRING (1.4 1.5, 2.2 2.7, 3.3 3.3)
 ```
 
 #### Filtering
@@ -416,7 +414,7 @@ Rotate(23, Point(0 0), MultiPoint(1 1, 2 2, 3 3)) # MULTIPOINT (1.31120793205093
 ```
 
 #### Round
-`Round(precision, num)` - round a number with a given precision (defaults to 0).
+`Round(precision, val)` - round a number or `Point` coordinates with a given precision (defaults to 0).
 ```
 Round(1, 1.255) # 1.3
 ```

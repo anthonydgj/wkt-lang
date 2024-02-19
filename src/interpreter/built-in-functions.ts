@@ -1,6 +1,6 @@
 import * as turf from '@turf/turf';
 
-import { isGeometryType, transform } from './helpers';
+import { OperationNotSupported, isGeometryType, toString, transform } from './helpers';
 
 import { GeometryType } from './types';
 import booleanEqual from "@turf/boolean-equal"
@@ -102,7 +102,17 @@ export namespace BuiltInFunctions {
         });
     }
 
-    export const Round = (precision = 0, val: number) => {
-        return +val.toFixed(precision);
+    export const Round = (precision = 0, val: any): any => {
+        if (typeof val === 'number') {
+            return +val.toFixed(precision);
+        }
+        if (isGeometryType(GeometryType.Point, val)) {
+            const coords = val.coordinates;
+            return turf.point([
+                Round(precision, coords[0]),
+                Round(precision, coords[1]),
+            ]).geometry;
+        }
+        throw new OperationNotSupported(`Unable to round value: ${toString(val)}`)
     }
 }
