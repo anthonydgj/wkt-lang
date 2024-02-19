@@ -96,13 +96,13 @@ export namespace BuiltInFunctions {
         return turf.geometryCollection(pointsList.map((p: any) => turf.point(p).geometry)).geometry;
     };
 
-    export const Rotate = (geometry: any, angle: number, origin: turf.Point) => {
+    export const Rotate = (angle: number, origin: turf.Point, geometry: any) => {
         return transform(geometry, (p: turf.Point) => {
             return turf.transformRotate(p, angle, { pivot: origin });
         });
     }
 
-    export const Round = (val: number, precision = 0) => {
+    export const Round = (precision = 0, val: number) => {
         return +val.toFixed(precision);
     }
 }

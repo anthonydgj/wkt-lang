@@ -51,4 +51,8 @@ export class WktLang {
         }
         return result;
     }
+
+    static evaluate(input: string, options?: Partial<Options>) {
+        return new WktLang(options).evaluate(input);
+    }
 }

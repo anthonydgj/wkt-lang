@@ -111,8 +111,7 @@ test('should map coordinates', () => {
 
 test('should bind parameters to functions', () => {
     let result = defaultEval(`
-        PipeRound = Function((precision, value) => Round(value, precision));
-        2.345325 | PipeRound:bind(2)
+        2.345325 | Round:bind(2)
     `);
     expect(result).toBe(2.35);
 

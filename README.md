@@ -14,12 +14,11 @@ Install dependency:
 npm install wkt-lang
 ```
 
-Evaluate code using the `evaluate()` function:
+Evaluate code using the `evaluate()` method:
 ```
 import { WktLang } from 'wkt-lang';
 
-const wktl = new WktLang();
-const result = wktl.evaluate(`Point(1 1) + Point(2 2)`);
+const result = WktLang.evaluate(`Point(1 1) + Point(2 2)`);
 ```
 
 See the [Terminal Usage](#terminal-usage) section for instructions using the CLI program.
@@ -27,15 +26,6 @@ See the [Terminal Usage](#terminal-usage) section for instructions using the CLI
 ## Examples
 
 The following examples use language constructs and built-in functions to generate geometry patterns.
-
-**Create a line of 10 points with 1-unit spacing:**
-```
-Generate 10 Function(i => Point(i 0))
-```
-
-<image src="examples/line.jpg" alt="Point line" width="700px" />
-
-<br>
 
 **Create a 20x10 grid of points with 2-unit spacing starting from coordinates -110, 38:**
 ```
@@ -46,7 +36,7 @@ Point(-110 39) + PointGrid(20, 10, 2)
 
 <br>
 
-**Create the same grid but introduce random offsets:**
+**Create the same grid and introduce random offsets:**
 ```
 Point(-110 39) +
     PointGrid(20, 10, 2) || 
@@ -62,27 +52,7 @@ Point(-110 39) +
 
 **Rotate a 20x10 grid of points around origin by 23 degrees:**
 ```
-rotatePoint = Function((p, angle, origin) => {
-    # Convert angle to radians
-    angleRad = angle * (PI / 180);
-
-    # Translate the point to the origin
-    translatedX = p:x() - origin:x();
-    translatedY = p:y() - origin:y();
-
-    # Apply rotation
-    rotatedX = translatedX * cos(angleRad) - translatedY * sin(angleRad);
-    rotatedY = translatedX * sin(angleRad) + translatedY * cos(angleRad);
-
-    # Translate the point back to the original position
-    finalX = rotatedX + origin:x();
-    finalY = rotatedY + origin:y();
-
-    Point(finalX finalY)
-});
-
-PointGrid(20, 10, 4)
-    || Function(p => rotatePoint(p, 23, Point(0 0)))
+PointGrid(20, 10, 4) | Rotate:bind(23, Point(0 0))
 ```
 
 <image src="examples/grid_rotated.jpg" alt="Rotated point grid" width="700px" />
@@ -249,9 +219,39 @@ Point(longitude latitude) # POINT (2 3)
 ```
 
 Supported data types include: 
-* number
-* boolean: `true`, `false`
+* Number
+* Boolean: `true`, `false`
 * Geometry: `Point`, `MultiPoint`, `LineString`, `MultiLineString`, `Polygon`, `GeometryCollection`
+* Function
+
+
+### Functions
+
+Functions are first-class and declared using the `Function` keyword:
+```
+getEquatorPoint = Function(longitude => Point(longitude 0));
+```
+
+They can be invoked using parentheses `()`:
+```
+getEquatorPoint(14.19) # POINT (14.19 0)
+```
+
+Functions can also accept multiple parameters and have function bodies spanning multiple lines. Similar to top-level expressions outside of a function, the last expression in the function body is used as the return value.
+```
+myFn = Function((x, y, last) => {
+    first = Point(x y);
+    LineString(first, last)
+});
+
+myFn(1, 2, Point(3 4)) # LINESTRING (1 2, 3 4)
+```
+
+Parameter values can be bound by calling `bind()` on a function:
+```
+myFnPartial = myFn:bind(1, 2);
+myFnPartial(Point(3 4)) # LINESTRING (1 2, 3 4)
+```
 
 ### Properties and Methods
 
@@ -326,34 +326,6 @@ If (points:numGeometries() > 3) Then (
     b = LineString(3 3, 4 4);
     a + b
 ) # POINT (4 6)
-```
-
-### Functions
-
-Functions are first-class and declared using the `Function` keyword:
-```
-getEquatorPoint = Function(longitude => Point(longitude 0));
-```
-
-They can be invoked using parentheses `()`:
-```
-getEquatorPoint(14.19) # POINT (14.19 0)
-```
-
-Functions can also accept multiple parameters and have function bodies spanning multiple lines. Similar to top-level expressions outside of a function, the last expression in the function body is used as the return value.
-```
-myFn = Function((x, y, last) => {
-    first = Point(x y);
-    LineString(first, last)
-});
-
-myFn(1, 2, Point(3 4)) # LINESTRING (1 2, 3 4)
-```
-
-Parameter values can be bound by calling `bind()` on a function:
-```
-myFnPartial = myFn:bind(1, 2);
-myFnPartial(Point(3 4)) # LINESTRING (1 2, 3 4)
 ```
 
 ### Generate Expressions
@@ -438,15 +410,15 @@ PointCircle(5, 50) # GEOMETRYCOLLECTION(POINT (5 0),POINT (4.9605735065723895 0.
 ```
 
 #### Rotate
-`Rotate(geometry, angleDegrees, originPoint)` - rotate a geometry by the specified angle around an origin point.
+`Rotate(angleDegrees, originPoint, geometry)` - rotate a geometry by the specified degrees around an origin point.
 ```
-Rotate(MultiPoint(1 1, 2 2, 3 3), 23, Point(0 0)) # MULTIPOINT (1.3112079320509338 0.5297935627181312, ... )
+Rotate(23, Point(0 0), MultiPoint(1 1, 2 2, 3 3)) # MULTIPOINT (1.3112079320509338 0.5297935627181312, ... )
 ```
 
 #### Round
-`Round(num, precision)` - round a number with a given precision (defaults to 0).
+`Round(precision, num)` - round a number with a given precision (defaults to 0).
 ```
-Round(1.255, 1) # 1.3
+Round(1, 1.255) # 1.3
 ```
 
 #### ToX

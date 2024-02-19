@@ -46,7 +46,7 @@ test('should convert from multi point', () => {
 });
 
 test('should rotate points', () => {
-    let result = defaultEval(`Rotate(MultiPoint(1 1, 2 2, 3 3), 23, Point(0 0))`);
+    let result = defaultEval(`Rotate(23, Point(0 0), MultiPoint(1 1, 2 2, 3 3))`);
     expect(result).toBeTruthy();
     expect(result.geometry.coordinates).toStrictEqual([
         [1.3112079320509338, 0.5297935627181312],
@@ -56,8 +56,8 @@ test('should rotate points', () => {
 });
 
 test('should round number values', () => {
-    let result = defaultEval(`Round(1.255)`);
+    let result = defaultEval(`Round(0, 1.255)`);
     expect(result).toBe(1);
-    result = defaultEval(`Round(1.255, 1)`);
+    result = defaultEval(`Round(1, 1.255)`);
     expect(result).toBe(1.3);
 });
