@@ -1,5 +1,8 @@
 # `wkt-lang`
 
+> **Note**: this project is now maintained at [anthonydgj/wael](https://github.com/anthonydgj/wael)
+
+
 `wkt-lang` is a domain-specific language for generating and manipulating geometry patterns. The language syntax aims to be a superset of [Well-Known Text (WKT)](https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry) with added support for programming features like variables, basic arithmetic, functions and comments. Geometries can be transformed using [array programming](https://en.wikipedia.org/wiki/Array_programming) features like geometry arithmetic and pipe transformations (see the [Syntax](#syntax) section below for details).
 
 Basic support is currently available for the following 2D geometries: `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `GEOMETRYCOLLECTION`.
